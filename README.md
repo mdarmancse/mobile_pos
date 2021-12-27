@@ -1,2 +1,2 @@
-# Gopal Bhar
- Gopal Bhar App by React Native
+#Mobile Pos System
+ 
