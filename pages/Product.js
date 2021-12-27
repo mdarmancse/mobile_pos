@@ -61,7 +61,7 @@ class About extends Component {
         Navigation.push('CenterScreen',{
 
             component:{
-                name:'ManageProduct',
+                name:'ProductList',
                 color: 'white',
 
                 options:{

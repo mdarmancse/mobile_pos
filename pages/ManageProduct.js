@@ -10,14 +10,18 @@ import Style from "../assets/style";
 
 
 
+
 class ManageProduct extends Component {
 
     constructor(props) {
 
         super(props);
+
+
         this.state = {
             tableHead: ['Product Name', 'Model', 'Unit', 'Price', 'Action'],
-            widthArr: [100, 80, 80, 80, 80],
+            widthArr: [100, 100, 100, 100, 100],
+            widthArr2: [30, 30, 40, 50, 40],
 
             product_data:[],
             tableHeadT: ['Head', 'Head2', 'Head3', 'Head4','Action'],
@@ -45,7 +49,7 @@ class ManageProduct extends Component {
 
             })
 
-          //  console.log(this.state.product_data)
+          // console.log(this.state.product_data)
 
 
         }).catch(error=>{
@@ -58,13 +62,19 @@ class ManageProduct extends Component {
 
 
     render() {
-
+        const elementButton = (value) => (
+            <TouchableOpacity onPress={() => this._alertIndex(value)}>
+                <View style={styles.btn}>
+                    <Text style={styles.btnText}>Delete</Text>
+                </View>
+            </TouchableOpacity>
+        );
         const state = this.state;
 
         const btns = (data, index) => (
             <View style={{flex:2,flexDirection:'row'}}>
 
-                <View style={styless.btn}>
+                <View style={styles.btn}>
                     <Button onPress={() => this._alertIndex(index)}
                               style={{width:'100%'}} danger>
                         <Icon name='trash' />
@@ -72,15 +82,6 @@ class ManageProduct extends Component {
                     </Button>
 
                 </View>
-                {/*<View style={styless.btn}>*/}
-                {/*    <Button onPress={() => this._alertIndex(index)}*/}
-                {/*            iconLeft  style={{width:'100%'}} size='sm' success>*/}
-                {/*        <Icon name='cog' />*/}
-
-                {/*    </Button>*/}
-
-                {/*</View>*/}
-
 
 
 
@@ -93,7 +94,7 @@ class ManageProduct extends Component {
         );
 
 
-        const tableData = this.state.product_data.map(record=>([record.product_name, record.product_model, record.unit, record.price]));
+        const tableData = this.state.product_data.map(record=>([record.product_name, record.product_model, record.unit, record.product_name]));
 
         return (
 
@@ -113,68 +114,76 @@ class ManageProduct extends Component {
                                 />
                                 {
                                     tableData.map((rowData, index) => (
-                                        <TableWrapper key={index} style={styless.row} >
+                                        <Table key={index} style={styles.row} >
                                             {
-                                                rowData.map((cellData, cellIndex) => (
-                                                <Cell
-                                                    key={cellIndex}
-                                                    // data={rowData}
-                                                    data={cellIndex === 3 ? btns(cellData, index) : cellData}
-                                                     // widthArr={state.widthArr}
-                                                    style={[styles.row, cellIndex % 2 && {backgroundColor: '#F7F6E7'}]}
+
+                                                <Row
+                                                    key={index}
+
+                                                    data={rowData === 3 ? btns(rowData, index) : rowData}
+                                                    widthArr={state.widthArr}
+                                                    style={[styles.row, index%2 && {backgroundColor: '#F7F6E7'}]}
                                                     textStyle={styles.text}
-                                                    flexArr={[1, 3]}
                                                 />
-                                                ))
+
                                             }
-                                        </TableWrapper>
+                                        </Table>
                                     ))
                                 }
                             </Table>
                         </ScrollView>
                     </View>
-                {/*<ScrollView horizontal={true}>*/}
-                {/*        <Table borderStyle={{borderColor: 'transparent'}}>*/}
-                {/*            <Row data={state.tableHead} style={styless.head} textStyle={styless.text}/>*/}
-                {/*            {*/}
-                {/*                tableData.map((rowData, index) => (*/}
-                {/*                    <TableWrapper key={index} style={styless.row} widthArr={state.widthArr}>*/}
-                {/*                        {*/}
-                {/*                            rowData.map((cellData, cellIndex) => (*/}
-                {/*                                <Cell key={cellIndex}*/}
-                {/*                                      data={cellIndex === 3 ? btns(cellData, index) : cellData}*/}
-                {/*                                      textStyle={styless.text}/>*/}
-                {/*                            ))*/}
-                {/*                        }*/}
-                {/*                    </TableWrapper>*/}
-                {/*                ))*/}
-                {/*            }*/}
-                {/*        </Table>*/}
 
+
+
+                </ScrollView>
+                <ScrollView horizontal={true} style={cell_styles.container}>
+                    <Table borderStyle={{borderColor: 'transparent'}}>
+                        <Row  data={state.tableHead} style={cell_styles.head} textStyle={styles.text}/>
+                        {
+                            tableData.map((rowData, index) => (
+                                <TableWrapper key={index} style={cell_styles.row}     >
+                                    {
+                                        rowData.map((cellData, cellIndex) => (
+                                            <Cell
+                                                widthArr={state.widthArr}
+                                                key={cellIndex}
+                                                  data={cellIndex === 3 ? elementButton(cellData, index) : cellData}
+                                                  textStyle={cell_styles.text}
+                                            />
+                                        ))
+                                    }
+                                </TableWrapper>
+                            ))
+                        }
+                    </Table>
                 </ScrollView>
             </View>
 
         );
     }
 }
+
+
 const styles = StyleSheet.create({
-    container: { flex: 1, padding: 8, paddingTop: 30, backgroundColor: '#fff' },
+    container: { flex: 1, padding: 16, paddingTop: 30, backgroundColor: '#fff' },
     header: { height: 50, backgroundColor: '#00cccc' },
     text: { maxWidth:80,textAlign: 'center', fontWeight: '100' },
     head_text: { maxWidth:80,textAlign: 'center', fontWeight: 'bold',color:'white' },
     dataWrapper: { marginTop: -1 },
-    row: {flex:2, height: 50, maxWidth:100, backgroundColor: '#E7E6E1' },
+    row: { flex:2,height: 40, backgroundColor: '#E7E6E1' },
     btn: { width: 58, height: 18, backgroundColor: '#78B7BB',  borderRadius: 2 },
     btnText: { textAlign: 'center', color: '#fff' }
 });
 
-const styless = StyleSheet.create({
-    container: { flex: 1, padding: 8, paddingTop: 30, backgroundColor: '#fff' ,width:100},
-    head: { height: 50, backgroundColor: '#00cccc' },
+
+const cell_styles = StyleSheet.create({
+    container: { flex: 1, padding: 16, paddingTop: 30, backgroundColor: '#fff' },
+    head: { height: 50, backgroundColor: '#808B97' },
     text: { margin: 6 },
-    dataWrapper: { marginTop: -1 },
-    row: { flexDirection: 'row', backgroundColor: '#FFF1C1' },
-    btn: { width: 50, height: 5 },
+    row: { flex:5,flexDirection: 'row', backgroundColor: '#FFF1C1' },
+    btn: { width: 58, height: 50, backgroundColor: '#78B7BB',  borderRadius: 2 },
     btnText: { textAlign: 'center', color: '#fff' }
 });
+
 export default ManageProduct;
