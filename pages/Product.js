@@ -124,8 +124,9 @@ class About extends Component {
         )})
 
         return (
+
             <Container>
-            <View style={{flex:100,width:'100%',height:'100%'}}>
+            <SafeAreaView style={{flex:100,width:'100%',height:'100%'}}>
                 <View style={{flex:2,flexDirection:'row'}}>
 
                     <View style={{flex:1,marginTop:5,marginBottom:5}}>
@@ -286,7 +287,7 @@ class About extends Component {
 
 
 
-            </View>
+            </SafeAreaView>
 
     </Container>
 
