@@ -5,6 +5,7 @@ import About from './pages/About';
 import Sales from './pages/Sales';
 import ManageProduct from './pages/ManageProduct';
 import ProductList from './pages/ProductList';
+import EditProduct from './pages/EditProduct';
 import Product from './pages/Product';
 import SideMenu from './pages/SideMenu';
 
@@ -17,6 +18,7 @@ Navigation.registerComponent('SalePage', () => Sales);
 Navigation.registerComponent('ManageProduct', () => ManageProduct);
 Navigation.registerComponent('ProductList', () => ProductList);
 Navigation.registerComponent('ProductPage', () =>Product );
+Navigation.registerComponent('EditProduct', () =>EditProduct );
 Navigation.registerComponent('AboutPage', () => About);
 
 Navigation.registerComponent('SideMenu', () => SideMenu);

@@ -18,6 +18,7 @@ import Style from "../assets/style";
 import RestClient from "../RestApi/RestClient";
 import AppUrl from "../RestApi/AppUrl";
 import { IconButton, Colors } from 'react-native-paper';
+import {Navigation} from "react-native-navigation";
 
 
 
@@ -36,13 +37,51 @@ class ProductList extends Component {
 
     }
 
+    goEditProduct=(product_id)=>{
+
+        Navigation.push('CenterScreen',{
+
+            component:{
+                name:'EditProduct',
+                color: 'white',
+                passProps: {
+                    product_id: product_id,
+
+                },
+                options:{
+
+                    sideMenu:{
+                        left:{
+                            visible:false,
 
 
-    // productDelete=(product_id)=>{
-    //
-    //     Alert.alert(product_id)
-    //
-    // }
+                        }
+
+                    },
+                    topBar:{
+                        title:{
+                            text:'Edit Product',
+                            color: 'white',
+
+                        },
+
+                        background: {
+                            color:'#00cccc'
+                        },
+
+
+                    }
+                }
+            }
+
+
+        })
+
+
+
+    }
+
+
 
     componentDidMount(): void {
 
@@ -94,13 +133,12 @@ class ProductList extends Component {
         );
     };
     productDelete=(product_id)=> {
-     //   Alert.alert(product_id);
-        let jsonObject={product_id:product_id};
+
         RestClient.GetRequest(AppUrl.delete_product+'/?product_id='+product_id).then(result=>{
 
             this.componentDidMount();
 
-          // Alert.alert('Product Deleted');
+
 
 
         }).catch(error=>{
@@ -142,7 +180,7 @@ class ProductList extends Component {
                                 icon="pencil"
                                 color={Colors.lightBlue500}
                                 size={30}
-                                onPress={() => this._alertIndex(ProductName)}
+                                onPress={() => this.goEditProduct(ProductId)}
                             />
                         </View>
                         <View style={{flex:1,marginTop:5,padding:2}} >
