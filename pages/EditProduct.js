@@ -1,12 +1,12 @@
 import React, {Component} from 'react';
-import axios from "axios";
-import {useState, useEffect} from 'react';
+import axios from 'axios';
+
 import {View, Text, Button, Input, Icon, Footer, FooterTab, Container} from 'native-base';
-import {Image, SafeAreaView, TextInput, Picker, StatusBar, Alert} from 'react-native';
-import {Navigation} from 'react-native-navigation';
+import {Image, SafeAreaView, TextInput, Picker, StatusBar, Alert, ScrollView} from 'react-native';
+
 import RestClient from "../RestApi/RestClient";
 import AppUrl from "../RestApi/AppUrl";
-
+import { FormItem } from 'react-native-form-component';
 
 import Style from '../assets/style'
 
@@ -37,6 +37,8 @@ class About extends Component {
             selected_supplier_id: '',
             selected_cat_id: '',
             selected_ptype_id: '',
+
+
 
         };
     }
@@ -100,6 +102,75 @@ class About extends Component {
 
 
     }
+    updateProduct=(productId)=>{
+
+
+        let formData=new FormData();
+        formData.append('product_id',productId);
+        formData.append('product_name',this.state.product_name);
+        formData.append('model',this.state.product_model);
+        formData.append('price',this.state.sale_price);
+        formData.append('tax',this.state.vat);
+        formData.append('serial_no',this.state.sn);
+        formData.append('unit',this.state.unit);
+        formData.append('ptype_id',this.state.ptype_id);
+        formData.append('category_id',this.state.category_id);
+        formData.append('supplier_id',this.state.supplier_id);
+        formData.append('supplier_price',this.state.supplier_price);
+
+
+        RestClient.PostRequest(AppUrl.Update_product,formData).then(result => {
+            console.log(result)
+
+            Alert.alert('Product Updated');
+
+        }).catch(error => {
+
+        })
+    }
+
+    nameOnchange=(text)=>{
+
+        this.setState({product_name:text});
+
+    }
+
+    snOnchange=(text)=>{
+
+        this.setState({sn:text});
+
+    }
+
+    unitOnchange=(text)=>{
+
+        this.setState({unit:text});
+
+    }
+    modelOnchange=(text)=>{
+
+        this.setState({product_model:text});
+
+    }
+
+    taxOnchange=(text)=>{
+
+        this.setState({vat:text});
+
+    }
+    salePriceOnchange=(text)=>{
+
+        this.setState({sale_price:text});
+
+    }
+
+    supplierPriceOnchange=(text)=>{
+
+        this.setState({supplier_price:text});
+
+    }
+
+
+
 
 
     render() {
@@ -131,7 +202,7 @@ class About extends Component {
 
         return (
 
-            <Container>
+            <ScrollView>
                 <SafeAreaView style={{flex: 100, width: '100%', height: '100%'}}>
 
 
@@ -144,6 +215,7 @@ class About extends Component {
                                 placeholder="Product Name"
                                 style={[Style.textInput]}
                                 value={this.state.product_name}
+                                onChangeText={text => this.nameOnchange(text)}
 
                             />
                             <Text style={[Style.text]}>SN:</Text>
@@ -151,6 +223,7 @@ class About extends Component {
                                 placeholder="SN"
                                 style={[Style.textInput]}
                                 value={this.state.sn}
+                                onChangeText={text => this.snOnchange(text)}
                             />
                             <Text style={[Style.text]}>Category:</Text>
                             <View
@@ -175,6 +248,7 @@ class About extends Component {
                                 placeholder="Model"
                                 style={[Style.textInput]}
                                 value={this.state.product_model}
+                                onChangeText={text => this.modelOnchange(text)}
                             />
 
                             <Text style={[Style.text]}>Sale Price:</Text>
@@ -182,6 +256,7 @@ class About extends Component {
                                 placeholder="Sale Price"
                                 style={[Style.textInput]}
                                 value={this.state.sale_price}
+                                onChangeText={text => this.salePriceOnchange(text)}
                             />
                             <Text style={[Style.text]}>Supplier Name:</Text>
                             <View
@@ -219,6 +294,7 @@ class About extends Component {
                                 placeholder="Unit"
                                 style={[Style.textInput]}
                                 value={this.state.unit}
+                                onChangeText={text => this.unitOnchange(text)}
                             />
                             <Text style={[Style.text]}>Product Type:</Text>
                             <View
@@ -242,6 +318,7 @@ class About extends Component {
                                 placeholder="VAT/TAX"
                                 style={[Style.textInput]}
                                 value={this.state.vat}
+                                onChangeText={text => this.taxOnchange(text)}
                             />
 
                             <Text style={[Style.text]}>Supplier Price:</Text>
@@ -249,7 +326,10 @@ class About extends Component {
                                 placeholder="Supplier Price"
                                 style={[Style.textInput]}
                                 value={this.state.supplier_price}
+                                onChangeText={text => this.supplierPriceOnchange(text)}
                             />
+
+
 
 
                         </View>
@@ -259,7 +339,9 @@ class About extends Component {
 
                     <Footer>
                         <FooterTab>
-                            <Button style={{backgroundColor: '#00cccc'}}>
+                            <Button style={{backgroundColor: '#00cccc'}}
+
+                                    onPress={() => this.updateProduct(this.state.barcode)}>
                                 <Text style={[Style.textBtn]}>Update</Text>
                             </Button>
                         </FooterTab>
@@ -267,7 +349,7 @@ class About extends Component {
 
                 </SafeAreaView>
 
-            </Container>
+            </ScrollView>
 
 
         );

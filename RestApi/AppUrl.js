@@ -8,6 +8,7 @@ class AppUrl {
     static product_list=this.BaseUrl+'/product_list';
     static delete_product=this.BaseUrl+'/delete_product';
     static product_editdata=this.BaseUrl+'/product_editdata';
+    static Update_product=this.BaseUrl+'/Update_product';
 
 
 }
