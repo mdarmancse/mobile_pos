@@ -11,14 +11,15 @@ import {
     SearchBar,
     List,
     ScrollView,
-    Image, Alert, RefreshControl
+    Image, Alert, RefreshControl, TextInput
 } from 'react-native';
-import {View,Text,Button,Input,Icon,Footer,FooterTab,Container} from 'native-base';
+import {View,Text,Button,Input,Icon,Footer,FooterTab,Container,Form,Item,Label} from 'native-base';
 import Style from "../assets/style";
 import RestClient from "../RestApi/RestClient";
 import AppUrl from "../RestApi/AppUrl";
 import { IconButton, Colors } from 'react-native-paper';
 import {Navigation} from "react-native-navigation";
+import StickyHeaderFooterScrollView from 'react-native-sticky-header-footer-scroll-view';
 
 
 
@@ -81,7 +82,45 @@ class ProductList extends Component {
 
     }
 
+    goAddProduct=()=>{
+        Navigation.push('CenterScreen',{
 
+            component:{
+                name:'ProductPage',
+                color: 'white',
+
+                options:{
+
+                    sideMenu:{
+                        left:{
+                            visible:false,
+
+
+                        }
+
+                    },
+                    topBar:{
+                        title:{
+                            text:'Products',
+                            color: 'white',
+
+                        },
+
+                        background: {
+                            color:'#00cccc'
+                        },
+
+
+                    }
+                }
+            }
+
+
+        })
+
+
+
+    }
 
     componentDidMount(): void {
 
@@ -214,7 +253,41 @@ class ProductList extends Component {
 
         return (
 
-<SafeAreaView style={{flex:1}}>
+<ScrollView >
+
+    <View style={{flex:2,flexDirection:'row',marginTop:5,marginBottom:5}}>
+
+        <View style={{flex:1}}>
+            <Button iconLeft style={{width:'100%'}}  onPress={this.goAddProduct} dark>
+                <Icon type="FontAwesome" name="plus" />
+                <Text style={[Style.addManageBtn]}>Add Product</Text>
+            </Button>
+
+        </View>
+
+        <View style={{flex:1}}>
+            <Button iconLeft style={{width:'100%'}}   disabled success>
+                <Icon type="FontAwesome"  name="cog" />
+                <Text style={[Style.addManageBtn]}>Manage Product</Text>
+            </Button>
+
+        </View>
+
+
+
+    </View>
+
+    <View  style={[Style.searchBG]}>
+    <TextInput
+        placeholder="Search..."
+        style={[Style.textInputSearch]}
+
+    />
+    </View>
+
+
+
+
     <FlatList keyExtractor={item =>item.product_id}
               data={this.state.product_data}
               renderItem={({item})=><this.ChildView ProductId={item.product_id} ProductName={item.product_name}  ProductModel={item.product_model}  ProductUnit={item.unit} ProductPrice={item.price} ProductImage={item.image} />}
@@ -222,7 +295,8 @@ class ProductList extends Component {
               refreshing={this.state.pull_refresh}
     />
 
-</SafeAreaView>
+</ScrollView>
+
 
 
 

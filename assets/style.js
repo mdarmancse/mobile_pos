@@ -10,6 +10,14 @@ export default StyleSheet.create({
         margin:5,
     },
 
+    textInputSearch: {
+        height: 40,
+        borderColor: '#00cccc',
+        borderRadius:10,
+        borderWidth: 1,
+        margin:5,
+    },
+
     text:{
         color:'grey',
         marginBottom:5,
@@ -25,6 +33,19 @@ export default StyleSheet.create({
         fontSize:15,
         textAlign:'center',
         fontWeight: 'bold',
+
+    },
+
+    addManageBtn:{
+        color:'white',
+        fontSize:13,
+        textAlign:'center',
+        fontWeight: 'bold',
+
+    },
+
+    searchBG:{
+        backgroundColor:'#fffdeb',
 
     }
 

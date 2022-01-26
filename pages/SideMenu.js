@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Text, View} from 'native-base';
+import {Button, Icon, Text, View} from 'native-base';
 import {Image,StyleSheet} from "react-native";
 import {Navigation} from 'react-native-navigation';
 
@@ -154,27 +154,27 @@ class SideMenu extends Component {
 
                 </View>
                 <View style={{flex:1,marginRight:60,backgroundColor:'white'}}>
-                    <View style={{flex:1,backgroundColor:'white',marginTop:40}}>
+                    <View style={{flex:1,backgroundColor:'white',marginTop:40,marginLeft:5}}>
 
 
                         <View style={{flexDirection:'row',marginTop:5}}>
-                            <Image source={require("../images/sales.png")}/>
+                            <Icon size={10} color="#4F8EF7" style = {{alignSelf:'center'}} type="FontAwesome" name="industry" />
 
                             <Text onPress={this.goSales} style={{marginLeft:8}}>Sales</Text>
                         </View>
                         <View style={{flexDirection:'row',marginTop:20}}>
-                            <Image source={require("../images/about.png")}/>
+                            <Icon type="FontAwesome" name="cart-plus" />
 
                             <Text onPress={this.goProduct} style={{marginLeft:8}}>Products</Text>
                         </View>
                     <View style={{flexDirection:'row',marginTop:20}}>
-                        <Image source={require("../images/about.png")}/>
+                        <Icon type="FontAwesome" name="info-circle" />
 
                         <Text onPress={this.goAbout} style={{marginLeft:8}}>About Me</Text>
                     </View>
                         <View style={{marginTop:20,flexDirection:'row'}}>
 
-                            <Image  source={require("../images/share.png")}/>
+                            <Icon type="FontAwesome" name="share-alt" />
                             <Text style={[styles.side_menu_text,{marginLeft:8}]}>Share</Text>
                         </View>
 
