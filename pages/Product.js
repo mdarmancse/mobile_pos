@@ -7,7 +7,8 @@ import {Navigation} from 'react-native-navigation';
 import RestClient from "../RestApi/RestClient";
 import AppUrl from "../RestApi/AppUrl";
 
-
+import Loader from '../components/Loader';
+import Error from '../components/Error';
 
 
 
@@ -39,6 +40,9 @@ class About extends Component {
         categoryData:[],
         ptypeData:[],
         supplierData:[],
+
+        isLoading:true,
+        isError:false,
     };
 
     componentDidMount(): void {

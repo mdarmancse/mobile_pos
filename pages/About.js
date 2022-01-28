@@ -10,7 +10,6 @@ class About extends Component {
         return (
             <View >
 
-                <Image style={{padding:10,marginRight:50,margin:10,height:'50%',width:'90%'}} source={require('../images/Arman.jpeg')}/>
 
 
 

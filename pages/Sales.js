@@ -15,7 +15,6 @@ class Sales extends Component {
 
             <SafeAreaView >
 
-                <Image style={{padding:10,marginRight:50,margin:10,height:'50%',width:'90%'}} source={require('../images/Arman.jpeg')}/>
 
 
 

@@ -136,7 +136,7 @@ class SideMenu extends Component {
                         justifyContent:'center'}}>
 
                         <View style={[styles.profileImgContainer,{ borderColor: 'black', borderWidth:2 }]}>
-                            <Image source={require("../images/dp.png")}/>
+                            <Image source={require("../assets/images/dp.png")}/>
                         </View>
                         <View style={{flex:0.5,justifyContent:'center'}}>
 

@@ -5,7 +5,6 @@ import {
 
     FlatList,
     StyleSheet,
-
     StatusBar,
 
     SearchBar,
@@ -16,6 +15,8 @@ import {
 import {View,Text,Button,Input,Icon,Footer,FooterTab,Container,Form,Item,Label} from 'native-base';
 import Style from "../assets/style";
 import RestClient from "../RestApi/RestClient";
+import Loader from '../components/Loader';
+import Error from '../components/Error';
 import AppUrl from "../RestApi/AppUrl";
 import { IconButton, Colors } from 'react-native-paper';
 import {Navigation} from "react-native-navigation";
@@ -34,6 +35,8 @@ class ProductList extends Component {
             product_data: [],
             error: null,
             pull_refresh:false,
+            isLoading:true,
+            isError:false,
         };
 
     }
@@ -128,15 +131,19 @@ class ProductList extends Component {
 
         RestClient.GetRequest(AppUrl.product_list).then(result=>{
 
-            this.setState({
-                product_data: result.response.product_list
-
-
-            })
-
+            // console.log(
+            //     result.response.status
+            // )
+            let success=result.response.status;
+            if (success=='ok'){
+                this.setState({
+                    product_data: result.response.product_list,isLoading:false,isError:false })
+            }else {
+                this.setState({isLoading:false,isError:true});
+            }
 
         }).catch(error=>{
-
+            this.setState({isLoading:false,isError:true});
         })
 
 
@@ -191,6 +198,7 @@ class ProductList extends Component {
 
 
             <View style={styles.container}>
+
                 <View style={styles.item}>
                     <View style={{flex:40}}>
                         <Image style={{height:100,width:100,padding:2}} source={{uri:ProductImage}}/>
@@ -250,62 +258,70 @@ class ProductList extends Component {
 
     render() {
 
+        if (this.state.isLoading==true){
 
-        return (
+            return (
+                <Loader/>
+            )
 
-<ScrollView >
+        }else if (this.state.isError==true){
 
-    <View style={{flex:2,flexDirection:'row',marginTop:5,marginBottom:5}}>
+            return (
+            <Error/>
+             )
 
-        <View style={{flex:1}}>
-            <Button iconLeft style={{width:'100%'}}  onPress={this.goAddProduct} dark>
-                <Icon type="FontAwesome" name="plus" />
-                <Text style={[Style.addManageBtn]}>Add Product</Text>
-            </Button>
+    }else{
 
-        </View>
+            return (
 
-        <View style={{flex:1}}>
-            <Button iconLeft style={{width:'100%'}}   disabled success>
-                <Icon type="FontAwesome"  name="cog" />
-                <Text style={[Style.addManageBtn]}>Manage Product</Text>
-            </Button>
+                <ScrollView >
 
-        </View>
+                    <View style={{flex:2,flexDirection:'row',marginTop:5,marginBottom:5}}>
 
+                        <View style={{flex:1}}>
+                            <Button iconLeft style={{width:'100%'}}  onPress={this.goAddProduct} dark>
+                                <Icon type="FontAwesome" name="plus" />
+                                <Text style={[Style.addManageBtn]}>Add Product</Text>
+                            </Button>
 
+                        </View>
 
-    </View>
+                        <View style={{flex:1}}>
+                            <Button iconLeft style={{width:'100%'}}   disabled success>
+                                <Icon type="FontAwesome"  name="cog" />
+                                <Text style={[Style.addManageBtn]}>Manage Product</Text>
+                            </Button>
 
-    <View  style={[Style.searchBG]}>
-    <TextInput
-        placeholder="Search..."
-        style={[Style.textInputSearch]}
-
-    />
-    </View>
-
-
-
-
-    <FlatList keyExtractor={item =>item.product_id}
-              data={this.state.product_data}
-              renderItem={({item})=><this.ChildView ProductId={item.product_id} ProductName={item.product_name}  ProductModel={item.product_model}  ProductUnit={item.unit} ProductPrice={item.price} ProductImage={item.image} />}
-              onRefresh={()=>this.pullRefresh()}
-              refreshing={this.state.pull_refresh}
-    />
-
-</ScrollView>
+                        </View>
 
 
 
+                    </View>
+
+                    <View  style={[Style.searchBG]}>
+                        <TextInput
+                            placeholder="Search..."
+                            style={[Style.textInputSearch]}
+
+                        />
+                    </View>
 
 
 
 
+                    <FlatList keyExtractor={item =>item.product_id}
+                              data={this.state.product_data}
+                              renderItem={({item})=><this.ChildView ProductId={item.product_id} ProductName={item.product_name}  ProductModel={item.product_model}  ProductUnit={item.unit} ProductPrice={item.price} ProductImage={item.image} />}
+                              onRefresh={()=>this.pullRefresh()}
+                              refreshing={this.state.pull_refresh}
+                    />
+
+                </ScrollView>
+
+            )
+        }
 
 
-        )
     }
 }
 const styles = StyleSheet.create({

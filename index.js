@@ -11,7 +11,7 @@ import SideMenu from './pages/SideMenu';
 
 import {Image,SafeAreaView} from 'react-native';
 
-;
+
 
 Navigation.registerComponent('HomePage', () => Home);
 Navigation.registerComponent('SalePage', () => Sales);
@@ -40,7 +40,7 @@ const stack={
                             color: 'white',
                         },
                         leftButtons:{
-                            icon:require('./images/menu.png'),
+                            icon:require('./assets/images/menu.png'),
                             color: 'white',
                         },
                         background: {
