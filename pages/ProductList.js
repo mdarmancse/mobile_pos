@@ -22,7 +22,7 @@ import { IconButton, Colors } from 'react-native-paper';
 import {Navigation} from "react-native-navigation";
 import StickyHeaderFooterScrollView from 'react-native-sticky-header-footer-scroll-view';
 
-
+import SearchableFlatlist from "searchable-flatlist";
 
 
 class ProductList extends Component {
@@ -37,6 +37,10 @@ class ProductList extends Component {
             pull_refresh:false,
             isLoading:true,
             isError:false,
+
+            searchTerm: "",
+
+
         };
 
     }
@@ -137,7 +141,14 @@ class ProductList extends Component {
             let success=result.response.status;
             if (success=='ok'){
                 this.setState({
-                    product_data: result.response.product_list,isLoading:false,isError:false })
+                    product_data: result.response.product_list,isLoading:false,isError:false
+
+
+                })
+
+                console.log(this.state.searchName)
+
+
             }else {
                 this.setState({isLoading:false,isError:true});
             }
@@ -193,6 +204,7 @@ class ProductList extends Component {
     }
 
     ChildView=({ProductId,ProductName,ProductModel,ProductUnit,ProductPrice,ProductImage})=>{
+
         return(
 
 
@@ -258,6 +270,7 @@ class ProductList extends Component {
 
     render() {
 
+
         if (this.state.isLoading==true){
 
             return (
@@ -299,22 +312,37 @@ class ProductList extends Component {
                     </View>
 
                     <View  style={[Style.searchBG]}>
+
                         <TextInput
                             placeholder="Search..."
                             style={[Style.textInputSearch]}
-
+                            onChangeText={searchTerm => this.setState({ searchTerm })}
                         />
                     </View>
 
 
 
 
-                    <FlatList keyExtractor={item =>item.product_id}
-                              data={this.state.product_data}
-                              renderItem={({item})=><this.ChildView ProductId={item.product_id} ProductName={item.product_name}  ProductModel={item.product_model}  ProductUnit={item.unit} ProductPrice={item.price} ProductImage={item.image} />}
-                              onRefresh={()=>this.pullRefresh()}
-                              refreshing={this.state.pull_refresh}
-                    />
+                    {/*<FlatList keyExtractor={item =>item.product_id}*/}
+                    {/*          data={this.state.product_data}*/}
+                    {/*          renderItem={({item})=><this.ChildView ProductId={item.product_id} ProductName={item.product_name}  ProductModel={item.product_model}  ProductUnit={item.unit} ProductPrice={item.price} ProductImage={item.image} />}*/}
+                    {/*          onRefresh={()=>this.pullRefresh()}*/}
+                    {/*          refreshing={this.state.pull_refresh}*/}
+                    {/*/>*/}
+
+
+
+                        <SearchableFlatlist
+                            searchProperty={"product_name"}
+                            searchTerm={this.state.searchTerm}
+                            data={this.state.product_data}
+                            containerStyle={{ flex: 1 }}
+                            renderItem={({item})=><this.ChildView ProductId={item.product_id} ProductName={item.product_name}  ProductModel={item.product_model}  ProductUnit={item.unit} ProductPrice={item.price} ProductImage={item.image} />}
+                            keyExtractor={item => item.product_id}
+                            onRefresh={()=>this.pullRefresh()}
+                            refreshing={this.state.pull_refresh}
+                        />
+
 
                 </ScrollView>
 
@@ -352,6 +380,26 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 32,
     },
+
+    sContainer: {
+        flex: 1,
+        backgroundColor: "#F5FCFF"
+    },
+    sTextItem: {
+        height: 50,
+        width: "100%",
+        textAlign: "center",
+        textAlignVertical: "center",
+        fontSize: 18
+    },
+    sSearchBar: {
+        paddingHorizontal: 10,
+        margin: 10,
+        height: 50,
+        borderColor: "gray",
+        borderWidth: 1,
+        fontSize: 18
+    }
 });
 
 export default ProductList;
