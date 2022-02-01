@@ -7,7 +7,7 @@ import {
     StyleSheet,
     StatusBar,
 
-    SearchBar,
+
     List,
     ScrollView,
     Image, Alert, RefreshControl, TextInput
@@ -22,9 +22,18 @@ import { IconButton, Colors } from 'react-native-paper';
 import {Navigation} from "react-native-navigation";
 import StickyHeaderFooterScrollView from 'react-native-sticky-header-footer-scroll-view';
 
-import SearchableFlatlist from "searchable-flatlist";
+ // import SearchableFlatlist from "searchable-flatlist";
+import {SearchBar} from 'react-native-elements';
+const data=[
+    {key:"1",title:"Android"},
+    {key:"2",title:"IOS"},
+    {key:"3",title:"React"},
+    {key:"4",title:"Node JS"},
+    {key:"5",title:"Java"},
+    {key:"6",title:"PHP"},
+    {key:"7",title:"Javascript"},
 
-
+];
 class ProductList extends Component {
 
     constructor(props) {
@@ -40,6 +49,10 @@ class ProductList extends Component {
 
             searchTerm: "",
 
+
+            search:"",
+
+            data:data,
 
         };
 
@@ -267,6 +280,48 @@ class ProductList extends Component {
 
 
     }
+    showItem=(data)=>{
+        Alert.alert(data);
+    }
+
+    renderHeader=()=>{
+        const { search } = this.state;
+        return(
+            <SearchBar
+                placeholder="Search Here"
+                lightTheme
+                onChangeText={text=>this.searchAction(text)}
+                autoCorrect={false}
+                value={search}
+            />
+        )
+    }
+    searchAction=(text)=>{
+        const newData=data.filter(item=>{
+            const itemData=`${item.title.toUpperCase()}`;
+            const textData=text.toUpperCase();
+            return itemData.indexOf(textData) > -1;
+
+        });
+        this.setState({
+            data:newData,
+            search:text
+        });
+    }
+
+
+
+    renderItem=(item)=>{
+
+        return(
+            <View key={item.key} style={styles.item}>
+                <TouchableOpacity onPress={()=>this.showItem(item.title)}>
+                    <Text>{item.title}</Text>
+                        </TouchableOpacity>
+                       </ View>
+                        )
+
+    }
 
     render() {
 
@@ -321,6 +376,12 @@ class ProductList extends Component {
                     </View>
 
 
+                    <FlatList
+                        data={this.state.data}
+                        renderItem={({item})=>this.renderItem(item)}
+                        keyExtractor={item =>item.product_id}
+                        ListHeaderComponent={this.renderHeader}
+                    />
 
 
                     {/*<FlatList keyExtractor={item =>item.product_id}*/}
@@ -332,16 +393,16 @@ class ProductList extends Component {
 
 
 
-                        <SearchableFlatlist
-                            searchProperty={"product_name"}
-                            searchTerm={this.state.searchTerm}
-                            data={this.state.product_data}
-                            containerStyle={{ flex: 1 }}
-                            renderItem={({item})=><this.ChildView ProductId={item.product_id} ProductName={item.product_name}  ProductModel={item.product_model}  ProductUnit={item.unit} ProductPrice={item.price} ProductImage={item.image} />}
-                            keyExtractor={item => item.product_id}
-                            onRefresh={()=>this.pullRefresh()}
-                            refreshing={this.state.pull_refresh}
-                        />
+                        {/*<SearchableFlatlist*/}
+                        {/*    searchProperty={"product_name"}*/}
+                        {/*    searchTerm={this.state.searchTerm}*/}
+                        {/*    data={this.state.product_data}*/}
+                        {/*    containerStyle={{ flex: 1 }}*/}
+                        {/*    renderItem={({item})=><this.ChildView ProductId={item.product_id} ProductName={item.product_name}  ProductModel={item.product_model}  ProductUnit={item.unit} ProductPrice={item.price} ProductImage={item.image} />}*/}
+                        {/*    keyExtractor={item => item.product_id}*/}
+                        {/*    onRefresh={()=>this.pullRefresh()}*/}
+                        {/*    refreshing={this.state.pull_refresh}*/}
+                        {/*/>*/}
 
 
                 </ScrollView>
