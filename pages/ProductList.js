@@ -146,7 +146,7 @@ class ProductList extends Component {
 
 
 
-        RestClient.GetRequest(AppUrl.product_list).then(result=>{
+    const api=    RestClient.GetRequest(AppUrl.product_list).then(result=>{
 
             // console.log(
             //     result.response.status
@@ -159,7 +159,6 @@ class ProductList extends Component {
 
                 })
 
-                console.log(this.state.searchName)
 
 
             }else {
@@ -216,24 +215,155 @@ class ProductList extends Component {
         })
     }
 
-    ChildView=({ProductId,ProductName,ProductModel,ProductUnit,ProductPrice,ProductImage})=>{
+    // ChildView=({ProductId,ProductName,ProductModel,ProductUnit,ProductPrice,ProductImage})=>{
+    //
+    //     return(
+    //
+    //
+    //
+    //         <View style={styles.container}>
+    //
+    //             <View style={styles.item}>
+    //                 <View style={{flex:40}}>
+    //                     <Image style={{height:100,width:100,padding:2}} source={{uri:ProductImage}}/>
+    //
+    //                 </View>
+    //                 <View style={{backgroundColor:'white',flex:40}}>
+    //                     <Text  style={[Style.text]}>{ProductName}</Text>
+    //                     <Text style={[Style.text]}>{ProductModel}</Text>
+    //                     <Text  style={[Style.text]}>{ProductUnit}</Text>
+    //                     <Text style={[Style.text]}>{ProductPrice}</Text>
+    //
+    //                 </View>
+    //                 <View style={{flex:30,flexDirection:"row"}}>
+    //
+    //                     {/*<View style={{flex:1,marginTop:5}}>*/}
+    //
+    //                     {/*    <Button onPress={() => this._alertIndex(ProductName)}*/}
+    //                     {/*        style={{width:'100%'}} danger>*/}
+    //                     {/*        <Icon type="FontAwesome" name="trash" />*/}
+    //
+    //                     {/*    </Button>*/}
+    //
+    //                     {/*</View>*/}
+    //                     <View style={{flex:1,marginTop:5,padding:2}} >
+    //                         <IconButton
+    //                             icon="pencil"
+    //                             color={Colors.lightBlue500}
+    //                             size={30}
+    //                             onPress={() => this.goEditProduct(ProductId)}
+    //                         />
+    //                     </View>
+    //                     <View style={{flex:1,marginTop:5,padding:2}} >
+    //                         <IconButton
+    //                             icon="delete"
+    //                             color={Colors.red500}
+    //                             size={30}
+    //                             onPress={() => this.showConfirmDialogDelete(ProductId)}
+    //                         />
+    //                     </View>
+    //
+    //
+    //
+    //                 </View>
+    //             </View>
+    //
+    //
+    //
+    //
+    //         </View>
+    //
+    //
+    //
+    //     );
+    //
+    //
+    // }
+    showItem=(data)=>{
+        Alert.alert(data);
+    }
+
+    renderHeader=()=>{
+        const { search } = this.state;
+        return(
+            <View  style={[Style.searchBG]}>
+            <SearchBar
+                placeholder="Search..."
+                inputStyle={{backgroundColor: 'white'}}
+                containerStyle={{backgroundColor: 'white', borderWidth: 1, borderRadius: 5}}
+                // inputContainerStyle={{backgroundColor: '#00cccc'}}
+                placeholderTextColor={'#g5g5g5'}
+                onChangeText={text=>this.searchAction(text)}
+                autoCorrect={false}
+                value={search}
+                round
+
+
+            />
+            </View>
+        )
+    }
+    searchAction=(text)=>{
+
+        if(text){
+
+            const newData=this.state.product_data.filter(item=>{
+                const itemData=`${item.product_name.toUpperCase()}`;
+                const textData=text.toUpperCase();
+                return itemData.indexOf(textData) > -1;
+
+            });
+            this.setState({
+                product_data:newData,
+                search:text
+            });
+        }else{
+
+            RestClient.GetRequest(AppUrl.product_list).then(result=>{
+
+                // console.log(
+                //     result.response.status
+                // )
+                let success=result.response.status;
+                if (success=='ok'){
+                    this.setState({
+                        product_data: result.response.product_list,isLoading:false,isError:false,search:''
+
+
+                    })
+
+
+
+                }else {
+                    this.setState({isLoading:false,isError:true});
+                }
+
+            }).catch(error=>{
+                this.setState({isLoading:false,isError:true});
+            })
+
+
+        }
+
+    }
+
+
+
+    renderItem=(item)=>{
 
         return(
-
-
-
             <View style={styles.container}>
 
                 <View style={styles.item}>
                     <View style={{flex:40}}>
-                        <Image style={{height:100,width:100,padding:2}} source={{uri:ProductImage}}/>
+                        <Image style={{height:100,width:100,padding:2}} source={{uri:item.image}}/>
 
                     </View>
                     <View style={{backgroundColor:'white',flex:40}}>
-                        <Text  style={[Style.text]}>{ProductName}</Text>
-                        <Text style={[Style.text]}>{ProductModel}</Text>
-                        <Text  style={[Style.text]}>{ProductUnit}</Text>
-                        <Text style={[Style.text]}>{ProductPrice}</Text>
+                        <Text  style={[Style.text]}>{item.product_name}</Text>
+                        <Text style={[Style.text]}>{item.product_model}</Text>
+                        <Text  style={[Style.text]}>{item.unit}</Text>
+                        <Text style={[Style.text]}>৳ {item.price}</Text>
 
                     </View>
                     <View style={{flex:30,flexDirection:"row"}}>
@@ -252,7 +382,7 @@ class ProductList extends Component {
                                 icon="pencil"
                                 color={Colors.lightBlue500}
                                 size={30}
-                                onPress={() => this.goEditProduct(ProductId)}
+                                onPress={() => this.goEditProduct(item.product_id)}
                             />
                         </View>
                         <View style={{flex:1,marginTop:5,padding:2}} >
@@ -260,7 +390,7 @@ class ProductList extends Component {
                                 icon="delete"
                                 color={Colors.red500}
                                 size={30}
-                                onPress={() => this.showConfirmDialogDelete(ProductId)}
+                                onPress={() => this.showConfirmDialogDelete(item.product_id)}
                             />
                         </View>
 
@@ -273,53 +403,7 @@ class ProductList extends Component {
 
 
             </View>
-
-
-
-        );
-
-
-    }
-    showItem=(data)=>{
-        Alert.alert(data);
-    }
-
-    renderHeader=()=>{
-        const { search } = this.state;
-        return(
-            <SearchBar
-                placeholder="Search Here"
-                lightTheme
-                onChangeText={text=>this.searchAction(text)}
-                autoCorrect={false}
-                value={search}
-            />
-        )
-    }
-    searchAction=(text)=>{
-        const newData=data.filter(item=>{
-            const itemData=`${item.title.toUpperCase()}`;
-            const textData=text.toUpperCase();
-            return itemData.indexOf(textData) > -1;
-
-        });
-        this.setState({
-            data:newData,
-            search:text
-        });
-    }
-
-
-
-    renderItem=(item)=>{
-
-        return(
-            <View key={item.key} style={styles.item}>
-                <TouchableOpacity onPress={()=>this.showItem(item.title)}>
-                    <Text>{item.title}</Text>
-                        </TouchableOpacity>
-                       </ View>
-                        )
+            )
 
     }
 
@@ -366,21 +450,23 @@ class ProductList extends Component {
 
                     </View>
 
-                    <View  style={[Style.searchBG]}>
+                    {/*<View  style={[Style.searchBG]}>*/}
 
-                        <TextInput
-                            placeholder="Search..."
-                            style={[Style.textInputSearch]}
-                            onChangeText={searchTerm => this.setState({ searchTerm })}
-                        />
-                    </View>
+                    {/*    <TextInput*/}
+                    {/*        placeholder="Search..."*/}
+                    {/*        style={[Style.textInputSearch]}*/}
+                    {/*        onChangeText={searchTerm => this.setState({ searchTerm })}*/}
+                    {/*    />*/}
+                    {/*</View>*/}
 
 
                     <FlatList
-                        data={this.state.data}
+                        data={this.state.product_data}
                         renderItem={({item})=>this.renderItem(item)}
                         keyExtractor={item =>item.product_id}
                         ListHeaderComponent={this.renderHeader}
+                        onRefresh={()=>this.pullRefresh()}
+                        refreshing={this.state.pull_refresh}
                     />
 
 
@@ -393,16 +479,6 @@ class ProductList extends Component {
 
 
 
-                        {/*<SearchableFlatlist*/}
-                        {/*    searchProperty={"product_name"}*/}
-                        {/*    searchTerm={this.state.searchTerm}*/}
-                        {/*    data={this.state.product_data}*/}
-                        {/*    containerStyle={{ flex: 1 }}*/}
-                        {/*    renderItem={({item})=><this.ChildView ProductId={item.product_id} ProductName={item.product_name}  ProductModel={item.product_model}  ProductUnit={item.unit} ProductPrice={item.price} ProductImage={item.image} />}*/}
-                        {/*    keyExtractor={item => item.product_id}*/}
-                        {/*    onRefresh={()=>this.pullRefresh()}*/}
-                        {/*    refreshing={this.state.pull_refresh}*/}
-                        {/*/>*/}
 
 
                 </ScrollView>
@@ -446,21 +522,20 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: "#F5FCFF"
     },
-    sTextItem: {
-        height: 50,
-        width: "100%",
-        textAlign: "center",
-        textAlignVertical: "center",
-        fontSize: 18
-    },
-    sSearchBar: {
-        paddingHorizontal: 10,
-        margin: 10,
-        height: 50,
-        borderColor: "gray",
-        borderWidth: 1,
-        fontSize: 18
-    }
+    // sTextItem: {
+    //     height: 50,
+    //     width: "100%",
+    //     textAlign: "center",
+    //     textAlignVertical: "center",
+    //     fontSize: 18
+    // },
+    // sSearchBar: {
+    //     height: 40,
+    //     borderColor: '#00cccc',
+    //     borderRadius:10,
+    //     borderWidth: 1,
+    //     margin:5,
+    // }
 });
 
 export default ProductList;
