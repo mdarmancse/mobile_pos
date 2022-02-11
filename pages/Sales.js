@@ -10,6 +10,7 @@ import AppUrl from "../RestApi/AppUrl";
 import {Colors, IconButton} from "react-native-paper";
 import Style from "../assets/style";
 
+
 var items = [
     {
         id: 1,
@@ -102,7 +103,7 @@ class Sales extends Component {
                     },
                     topBar:{
                         title:{
-                            text:'Cart Product',
+                            text:'Select Product',
                             color: 'white',
 
                         },
@@ -122,6 +123,8 @@ class Sales extends Component {
 
 
     }
+
+
 
     render() {
 
@@ -191,6 +194,15 @@ class Sales extends Component {
                                 color={Colors.lightBlue500}
                                 size={30}
                                 onPress={() => this.goProductList()}
+                            />
+                        </View>
+
+                        <View style={{flex:2}}>
+                            <IconButton
+                                icon="cog"
+                                color={Colors.lightBlue500}
+                                size={30}
+
                             />
                         </View>
 

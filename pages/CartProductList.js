@@ -19,17 +19,24 @@ import Loader from '../components/Loader';
 import Error from '../components/Error';
 import AppUrl from "../RestApi/AppUrl";
 import { IconButton, Colors } from 'react-native-paper';
-import {Navigation} from "react-native-navigation";
-import StickyHeaderFooterScrollView from 'react-native-sticky-header-footer-scroll-view';
 
- // import SearchableFlatlist from "searchable-flatlist";
+
 import {SearchBar} from 'react-native-elements';
 
+import { Table, TableWrapper, Row, Cell } from "react-native-table-component";
+// import { AsyncStorage } from 'react-native';
 class CartProductList extends Component {
 
     constructor(props) {
 
         super(props);
+        const elementButton = (value) => (
+            <TouchableOpacity onPress={() => this._alertIndex(value)}>
+                <View style={styles.btn}>
+                    <Text style={styles.btnText}>{value}</Text>
+                </View>
+            </TouchableOpacity>
+        );
         this.state = {
             loading: false,
             product_data: [],
@@ -43,14 +50,28 @@ class CartProductList extends Component {
 
             search:"",
 
+            tableHead: ["Item Name", "Model", "Stock", "Price","Status"],
+            tableData1: [
+                ["T. Walker", "870", "3", "d","ad"],
+                ["S. Weintraub", "650", "c", "d","ad"],
+                ["M. Clingan", "320", "3", "4","ad"],
+                ["S. Lucy", "1010", "c", "d","ad"]
+            ]
+
+
+
 
 
         };
 
     }
 
-
-
+    static navigationOptions = {
+        header: null
+    };
+    _alertIndex(index) {
+        Alert.alert(`Payment Sent`);
+    }
     componentDidMount(): void {
 
 
@@ -193,7 +214,27 @@ class CartProductList extends Component {
 
     }
 
+
+
+
+
     render() {
+
+
+        const state = this.state;
+        const element = (data, index) => (
+            <TouchableOpacity onPress={() => this._alertIndex(index)}>
+
+                <IconButton
+                    icon="plus"
+                    color={Colors.lightBlue500}
+                    size={30}
+
+                />
+            </TouchableOpacity>
+        );
+        const tableData = this.state.product_data.map(record=>([record.product_name, record.product_model, record.stock,record.price,'']));
+
 
 
         if (this.state.isLoading==true){
@@ -212,29 +253,49 @@ class CartProductList extends Component {
 
             return (
 
-                <ScrollView >
-
-
-
-
-
-
-                    <FlatList
-                        data={this.state.product_data}
-                        renderItem={({item})=>this.renderItem(item)}
-                        keyExtractor={item =>item.product_id}
-                        ListHeaderComponent={this.renderHeader}
-                        onRefresh={()=>this.pullRefresh()}
-                        refreshing={this.state.pull_refresh}
-                    />
-
-
-
-
-
-
-
+                <ScrollView style={styles.container} >
+                    <Table borderStyle={{ borderWidth: 1 }}>
+                        <Row
+                            data={state.tableHead}
+                            style={styles.head}
+                            textStyle={styles.text}
+                        />
+                        {tableData.map((rowData, index) => (
+                            <TableWrapper key={index} style={styles.row}>
+                                {rowData.map((cellData, cellIndex) => (
+                                    <Cell
+                                        key={cellIndex}
+                                        data={cellIndex === 4 ? element(cellData, index) : cellData}
+                                        textStyle={styles.text}
+                                    />
+                                ))}
+                            </TableWrapper>
+                        ))}
+                    </Table>
+                    <View style={{flex:2}}>
+                        <IconButton
+                            icon="cog"
+                            color={Colors.lightBlue500}
+                            size={30}
+                            onPress={() => this._retrieveData()}
+                        />
+                    </View>
                 </ScrollView>
+
+
+
+                // <ScrollView >
+                //
+                //     <FlatList
+                //         data={this.state.product_data}
+                //         renderItem={({item})=>this.renderItem(item)}
+                //         keyExtractor={item =>item.product_id}
+                //         ListHeaderComponent={this.renderHeader}
+                //         onRefresh={()=>this.pullRefresh()}
+                //         refreshing={this.state.pull_refresh}
+                //     />
+                //
+                // </ScrollView>
 
             )
         }
@@ -242,40 +303,28 @@ class CartProductList extends Component {
 
     }
 }
+
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        marginTop: 7,
-        backgroundColor:'white',
-        shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-
-        elevation: 5,
+        padding: 16,
+        paddingTop: 30,
+        backgroundColor: "#f0f3f5"
     },
-    item: {
-
-        padding: 2,
-        marginVertical: 8,
-        marginHorizontal: 16,
-        backgroundColor:'white',
-        height:'20%',
-        flexDirection:'row'
-
+    head: { height: 40, backgroundColor: "#00cccc" },
+    text: { margin: 6 },
+    row: { flexDirection: "row", backgroundColor: "white" },
+    btn: {
+        width: 58,
+        height: 18,
+        backgroundColor: "black",
+        borderRadius: 2,
+        alignSelf: "center"
     },
-    title: {
-        fontSize: 32,
-    },
-
-    sContainer: {
-        flex: 1,
-        backgroundColor: "#F5FCFF"
-    },
-
+    btnText: { textAlign: "center", color: "#fff" }
 });
+
+
 
 export default CartProductList;
