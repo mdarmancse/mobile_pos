@@ -24,7 +24,11 @@ import { IconButton, Colors } from 'react-native-paper';
 import {SearchBar} from 'react-native-elements';
 
 import { Table, TableWrapper, Row, Cell } from "react-native-table-component";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {datetime} from "react-table/src/sortTypes";
 // import { AsyncStorage } from 'react-native';
+
+
 class CartProductList extends Component {
 
     constructor(props) {
@@ -69,8 +73,9 @@ class CartProductList extends Component {
     static navigationOptions = {
         header: null
     };
-    _alertIndex(index) {
-        Alert.alert(`Payment Sent`);
+    _alertIndex(data,index) {
+        console.log(data);
+         Alert.alert(`This is row ${data + 1}`);
     }
     componentDidMount(): void {
 
@@ -214,22 +219,48 @@ class CartProductList extends Component {
 
     }
 
+    onClickAddCart(data){
 
+        const itemcart = {
+            data: data,
+
+        }
+
+        AsyncStorage.getItem('cart').then((datacart)=>{
+            if (datacart !== null) {
+                // We have data!!
+                const cart = JSON.parse(datacart)
+                cart.push(itemcart)
+                AsyncStorage.setItem('cart',JSON.stringify(cart));
+            }
+            else{
+                const cart  = []
+                cart.push(itemcart)
+                AsyncStorage.setItem('cart',JSON.stringify(cart));
+            }
+            alert("Add Cart")
+        })
+            .catch((err)=>{
+                alert(err)
+            })
+    }
 
 
 
     render() {
 
 
+
+
         const state = this.state;
         const element = (data, index) => (
-            <TouchableOpacity onPress={() => this._alertIndex(index)}>
+            <TouchableOpacity >
 
                 <IconButton
                     icon="plus"
                     color={Colors.lightBlue500}
                     size={30}
-
+                    onPress={()=>this._alertIndex(data,index)}
                 />
             </TouchableOpacity>
         );
@@ -272,14 +303,16 @@ class CartProductList extends Component {
                             </TableWrapper>
                         ))}
                     </Table>
-                    <View style={{flex:2}}>
-                        <IconButton
-                            icon="cog"
-                            color={Colors.lightBlue500}
-                            size={30}
-                            onPress={() => this._retrieveData()}
-                        />
-                    </View>
+
+
+                    {/*<View style={{flex:2}}>*/}
+                    {/*    <IconButton*/}
+                    {/*        icon="cog"*/}
+                    {/*        color={Colors.red600}*/}
+                    {/*        size={30}*/}
+                    {/*        onPress={() => storeData()}*/}
+                    {/*    />*/}
+                    {/*</View>*/}
                 </ScrollView>
 
 

@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import {View, Tex, Input, Button, Icon, Text} from 'native-base';
-import {Image, SafeAreaView, ScrollView, StyleSheet} from 'react-native';
+import {Alert, Image, SafeAreaView, ScrollView, StyleSheet,TouchableOpacity} from 'react-native';
 import {Navigation} from 'react-native-navigation';
 import SideMenu from "./SideMenu";
 import SearchableDropdown from 'react-native-searchable-dropdown';
@@ -9,6 +9,7 @@ import RestClient from "../RestApi/RestClient";
 import AppUrl from "../RestApi/AppUrl";
 import {Colors, IconButton} from "react-native-paper";
 import Style from "../assets/style";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
 var items = [
@@ -58,6 +59,8 @@ class Sales extends Component {
             product_data:[],
             tableHeadT: ['Head', 'Head2', 'Head3', 'Head4','Action'],
 
+            dataCart:[],
+
 
         }
     }
@@ -79,6 +82,19 @@ class Sales extends Component {
         }).catch(error=>{
 
         })
+
+        AsyncStorage.getItem('cart').then((cart)=>{
+            if (cart !== null) {
+                // We have data!!
+                const cartfood = JSON.parse(cart)
+                this.setState({dataCart:cartfood})
+
+                console.log(cartfood)
+            }
+        })
+            .catch((err)=>{
+                alert(err)
+            })
 
 
 
@@ -128,6 +144,8 @@ class Sales extends Component {
 
     render() {
 
+
+
         const tableData = this.state.product_data.map(record=>([record.product_name, record.product_model, record.unit, record.product_name]));
 
         return (
@@ -135,59 +153,82 @@ class Sales extends Component {
 
 
                 <ScrollView style={{flex:1}}>
-                    <View style={{flex:10,flexDirection:'row'}}>
+                    {/*<View style={{flex:10,flexDirection:'row'}}>*/}
 
-                        <View style={{flex:8}}>
+                    {/*    <View style={{flex:8}}>*/}
 
 
-                            <SearchableDropdown
-                                multi={true}
-                                selectedItems={this.state.selectedItems}
-                                onItemSelect={(item) => {
-                                    const items = this.state.selectedItems;
-                                    items.push(item)
-                                    this.setState({ selectedItems: items });
-                                }}
-                                containerStyle={{ padding: 5 }}
-                                onRemoveItem={(item, index) => {
-                                    const items = this.state.selectedItems.filter((sitem) => sitem.id !== item.id);
-                                    this.setState({ selectedItems: items });
-                                }}
-                                itemStyle={{
-                                    padding: 10,
-                                    marginTop: 2,
-                                    backgroundColor: '#ddd',
-                                    borderColor: '#bbb',
-                                    borderWidth: 1,
-                                    borderRadius: 5,
-                                }}
-                                itemTextStyle={{ color: '#222' }}
-                                itemsContainerStyle={{ maxHeight: 140 }}
-                                items={items}
-                                // defaultIndex={2}
-                                chip={true}
-                                resetValue={false}
-                                textInputProps={
-                                    {
-                                        placeholder: "Search your product..",
-                                        // underlineColorAndroid: "transparent",
-                                        style: {
-                                            padding: 12,
-                                            borderWidth: 1,
-                                            borderColor: '#ccc',
-                                            borderRadius: 5,
-                                        },
-                                        // onTextChange: text => alert(text)
-                                    }
-                                }
-                                listProps={
-                                    {
-                                        // nestedScrollEnabled: true,
-                                    }
-                                }
-                            />
-                        </View>
+                    {/*        <SearchableDropdown*/}
+                    {/*            multi={true}*/}
+                    {/*            selectedItems={this.state.selectedItems}*/}
+                    {/*            onItemSelect={(item) => {*/}
+                    {/*                const items = this.state.selectedItems;*/}
+                    {/*                items.push(item)*/}
+                    {/*                this.setState({ selectedItems: items });*/}
+                    {/*            }}*/}
+                    {/*            containerStyle={{ padding: 5 }}*/}
+                    {/*            onRemoveItem={(item, index) => {*/}
+                    {/*                const items = this.state.selectedItems.filter((sitem) => sitem.id !== item.id);*/}
+                    {/*                this.setState({ selectedItems: items });*/}
+                    {/*            }}*/}
+                    {/*            itemStyle={{*/}
+                    {/*                padding: 10,*/}
+                    {/*                marginTop: 2,*/}
+                    {/*                backgroundColor: '#ddd',*/}
+                    {/*                borderColor: '#bbb',*/}
+                    {/*                borderWidth: 1,*/}
+                    {/*                borderRadius: 5,*/}
+                    {/*            }}*/}
+                    {/*            itemTextStyle={{ color: '#222' }}*/}
+                    {/*            itemsContainerStyle={{ maxHeight: 140 }}*/}
+                    {/*            items={items}*/}
+                    {/*            // defaultIndex={2}*/}
+                    {/*            chip={true}*/}
+                    {/*            resetValue={false}*/}
+                    {/*            textInputProps={*/}
+                    {/*                {*/}
+                    {/*                    placeholder: "Search your product..",*/}
+                    {/*                    // underlineColorAndroid: "transparent",*/}
+                    {/*                    style: {*/}
+                    {/*                        padding: 12,*/}
+                    {/*                        borderWidth: 1,*/}
+                    {/*                        borderColor: '#ccc',*/}
+                    {/*                        borderRadius: 5,*/}
+                    {/*                    },*/}
+                    {/*                    // onTextChange: text => alert(text)*/}
+                    {/*                }*/}
+                    {/*            }*/}
+                    {/*            listProps={*/}
+                    {/*                {*/}
+                    {/*                    // nestedScrollEnabled: true,*/}
+                    {/*                }*/}
+                    {/*            }*/}
+                    {/*        />*/}
+                    {/*    </View>*/}
 
+                    {/*    <View style={{flex:2}}>*/}
+                    {/*        <IconButton*/}
+                    {/*            icon="plus"*/}
+                    {/*            color={Colors.lightBlue500}*/}
+                    {/*            size={30}*/}
+                    {/*            onPress={() => this.goProductList()}*/}
+                    {/*        />*/}
+                    {/*    </View>*/}
+
+                    {/*    <View style={{flex:2}}>*/}
+                    {/*        <IconButton*/}
+                    {/*            icon="cog"*/}
+                    {/*            color={Colors.lightBlue500}*/}
+                    {/*            size={30}*/}
+                    {/*            onPress={() => getData()}*/}
+                    {/*        />*/}
+                    {/*    </View>*/}
+
+                    {/*</View>*/}
+                    <View style={{flex:1,alignItems: 'center', justifyContent: 'center'}}>
+                        <View style={{height:20}} />
+                        <Text style={{fontSize:32,fontWeight:"bold",color:"#33c37d"}}>Cart food</Text>
+                        <View style={{height:10}} />
                         <View style={{flex:2}}>
                             <IconButton
                                 icon="plus"
@@ -196,18 +237,62 @@ class Sales extends Component {
                                 onPress={() => this.goProductList()}
                             />
                         </View>
+                        <View style={{flex:1}}>
 
-                        <View style={{flex:2}}>
-                            <IconButton
-                                icon="cog"
-                                color={Colors.lightBlue500}
-                                size={30}
+                            <ScrollView>
 
-                            />
+                                {
+                                    this.state.dataCart.map((item)=>{
+                                        return(
+                                            <View style={{width:1000,margin:10,backgroundColor:'transparent', flexDirection:'row', borderBottomWidth:2, borderColor:"#cccccc", paddingBottom:10}}>
+                                                <Image resizeMode={"contain"} style={{width:100,height:100}} source={{uri: item.image}} />
+                                                <View style={{flex:1, backgroundColor:'transparent', padding:10, justifyContent:"space-between"}}>
+                                                    <View>
+                                                        <Text style={{fontWeight:"bold", fontSize:20}}>{item.product_id}</Text>
+                                                        <Text>Lorem Ipsum de food</Text>
+                                                    </View>
+                                                    <View style={{flexDirection:'row',justifyContent:'space-between'}}>
+                                                        <Text style={{fontWeight:'bold',color:"#33c37d",fontSize:20}}>${item.product_name}</Text>
+                                                        <View style={{flexDirection:'row', alignItems:'center'}}>
+                                                            <TouchableOpacity>
+                                                                <Icon name="ios-remove-circle" size={35} color={"#33c37d"} />
+                                                            </TouchableOpacity>
+                                                            <Text style={{paddingHorizontal:8, fontWeight:'bold', fontSize:18}}>5</Text>
+                                                            <TouchableOpacity>
+                                                                <Icon name="ios-add-circle" size={35} color={"#33c37d"} />
+                                                            </TouchableOpacity>
+                                                        </View>
+                                                    </View>
+                                                </View>
+                                            </View>
+                                        )
+                                    })
+                                }
+
+                                <View style={{height:20}} />
+
+                                <TouchableOpacity style={{
+                                    backgroundColor:"#33c37d",
+                                    width:100,
+                                    alignItems:'center',
+                                    padding:10,
+                                    borderRadius:5,
+                                    margin:20
+                                }}>
+                                    <Text style={{
+                                        fontSize:24,
+                                        fontWeight:"bold",
+                                        color:'white'
+                                    }}>
+                                        CHECKOUT
+                                    </Text>
+                                </TouchableOpacity>
+
+                                <View style={{height:20}} />
+                            </ScrollView>
                         </View>
 
                     </View>
-
                 </ScrollView>
 
 
