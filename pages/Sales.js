@@ -1,15 +1,28 @@
 import React, { Component, Fragment } from 'react';
 import {View, Tex, Input, Button, Icon, Text} from 'native-base';
-import {Alert, Image, SafeAreaView, ScrollView, StyleSheet,TouchableOpacity} from 'react-native';
+import {
+    Alert,
+    Image,
+    RefreshControl,
+    SafeAreaView,
+    ScrollView,
+    StyleSheet,
+    TextInput,
+    TouchableOpacity
+} from 'react-native';
 import {Navigation} from 'react-native-navigation';
 import SideMenu from "./SideMenu";
 import SearchableDropdown from 'react-native-searchable-dropdown';
-import {Row, Table} from "react-native-table-component";
+import {Cell, Row, Table, TableWrapper} from "react-native-table-component";
 import RestClient from "../RestApi/RestClient";
 import AppUrl from "../RestApi/AppUrl";
 import {Colors, IconButton} from "react-native-paper";
 import Style from "../assets/style";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Loader from "../components/Loader";
+import Error from "../components/Error";
+
+import { Col, Row as RW, Grid } from 'react-native-easy-grid';
 
 
 var items = [
@@ -52,14 +65,18 @@ class Sales extends Component {
         this.state = {
             selectedItems: [],
 
-            tableHead: ['Product Name', 'Model', 'Unit', 'Price', 'Action'],
-            widthArr: [100, 100, 100, 100, 100],
-            widthArr2: [30, 30, 40, 50, 40],
+            tableHead: ['Item Name','SN','Av Qty','Qty', 'Rate','Total', 'Action'],
+            widthArr: [100, 100,100, 150,100, 100,100],
+
 
             product_data:[],
-            tableHeadT: ['Head', 'Head2', 'Head3', 'Head4','Action'],
+
 
             dataCart:[],
+            qty:"1",
+            total:"0",
+
+
 
 
         }
@@ -76,12 +93,14 @@ class Sales extends Component {
 
             })
 
-            // console.log(this.state.product_data)
+
 
 
         }).catch(error=>{
 
         })
+
+
 
         AsyncStorage.getItem('cart').then((cart)=>{
             if (cart !== null) {
@@ -89,7 +108,6 @@ class Sales extends Component {
                 const cartfood = JSON.parse(cart)
                 this.setState({dataCart:cartfood})
 
-                console.log(cartfood)
             }
         })
             .catch((err)=>{
@@ -97,6 +115,13 @@ class Sales extends Component {
             })
 
 
+
+    }
+
+    removeValue = async (i) => {
+        const dataCar = this.state.dataCart
+        dataCar.splice(i,1)
+        this.setState({dataCart:dataCar})
 
     }
 
@@ -141,94 +166,141 @@ class Sales extends Component {
     }
 
 
+    pullRefresh=()=>{
+        this.componentDidMount();
+    }
+    qtyOnchange=(text,i)=>{
+        const dataCar = this.state.dataCart
+         dataCar[i].quantity = text;
+        this.setState({dataCart:dataCar})
+    }
+
+    clearCart = async () => {
+        try {
+            await AsyncStorage.clear();
+            const dataCar = this.state.dataCart
+            let length=dataCar.length;
+            dataCar.splice(0,length)
+            this.setState({dataCart:dataCar})
+
+        } catch(e) {
+
+        }
+
+
+    }
+
+
 
     render() {
+        const dataCar = this.state.dataCart;
+        const state = this.state;
+        const element = (data, index) => (
+            <TouchableOpacity >
+
+                <IconButton
+                    icon="delete"
+                    color={Colors.red600}
+                    size={20}
+                    onPress={()=>this.removeValue(index)}
+                />
+            </TouchableOpacity>
+        );
+
+        const qty = (data,i) => (
+
+            <TextInput
+                style={[Style.SalestextInput]}
+                keyboardType = 'numeric'
+                onChangeText={text => this.qtyOnchange(text,i)}
+                  value={dataCar[i].quantity}
+
+            />
+        );
+
+
+        const tableData = this.state.dataCart.map((record,i)=>([record.product_name,record.product_sn,record.product_stock,'', record.product_rate,record.quantity*record.product_rate,'']));
 
 
 
-        const tableData = this.state.product_data.map(record=>([record.product_name, record.product_model, record.unit, record.product_name]));
+        if (this.state.isLoading==true){
 
-        return (
-            <Fragment>
+            return (
+                <Loader/>
+            )
+
+        }else if (this.state.isError==true){
+
+            return (
+                <Error/>
+            )
+
+        }else{
+
+            return (
+
+                <ScrollView style={styles.container}
+
+                            refreshControl={
+                                <RefreshControl
+                                    refreshing={false}
+                                    onRefresh={this.pullRefresh}
+                                />
+                            }
+                >
+                    <View style={{flex:10,flexDirection:'row'}}>
+
+                        <View style={{flex:8}}>
 
 
-                <ScrollView style={{flex:1}}>
-                    {/*<View style={{flex:10,flexDirection:'row'}}>*/}
+                            <SearchableDropdown
+                                multi={true}
+                                selectedItems={this.state.selectedItems}
+                                onItemSelect={(item) => {
+                                    const items = this.state.selectedItems;
+                                    items.push(item)
+                                    this.setState({ selectedItems: items });
+                                }}
+                                containerStyle={{ padding: 5 }}
+                                onRemoveItem={(item, index) => {
+                                    const items = this.state.selectedItems.filter((sitem) => sitem.id !== item.id);
+                                    this.setState({ selectedItems: items });
+                                }}
+                                itemStyle={{
+                                    padding: 10,
+                                    marginTop: 2,
+                                    backgroundColor: '#ddd',
+                                    borderColor: '#bbb',
+                                    borderWidth: 1,
+                                    borderRadius: 5,
+                                }}
+                                itemTextStyle={{ color: '#222' }}
+                                itemsContainerStyle={{ maxHeight: 140 }}
+                                items={items}
+                                // defaultIndex={2}
+                                chip={true}
+                                resetValue={false}
+                                textInputProps={
+                                    {
+                                        placeholder: "Search your product..",
+                                        // underlineColorAndroid: "transparent",
+                                        style: {
+                                            padding: 12,
+                                            borderWidth: 1,
+                                            borderColor: '#ccc',
+                                            borderRadius: 5,
+                                        },
+                                        // onTextChange: text => alert(text)
+                                    }
+                                }
+                                listProps={
+                                    {
+                                        // nestedScrollEnabled: true,
+                                    }
+                                }
+                            />
+                        </View>
 
-                    {/*    <View style={{flex:8}}>*/}
-
-
-                    {/*        <SearchableDropdown*/}
-                    {/*            multi={true}*/}
-                    {/*            selectedItems={this.state.selectedItems}*/}
-                    {/*            onItemSelect={(item) => {*/}
-                    {/*                const items = this.state.selectedItems;*/}
-                    {/*                items.push(item)*/}
-                    {/*                this.setState({ selectedItems: items });*/}
-                    {/*            }}*/}
-                    {/*            containerStyle={{ padding: 5 }}*/}
-                    {/*            onRemoveItem={(item, index) => {*/}
-                    {/*                const items = this.state.selectedItems.filter((sitem) => sitem.id !== item.id);*/}
-                    {/*                this.setState({ selectedItems: items });*/}
-                    {/*            }}*/}
-                    {/*            itemStyle={{*/}
-                    {/*                padding: 10,*/}
-                    {/*                marginTop: 2,*/}
-                    {/*                backgroundColor: '#ddd',*/}
-                    {/*                borderColor: '#bbb',*/}
-                    {/*                borderWidth: 1,*/}
-                    {/*                borderRadius: 5,*/}
-                    {/*            }}*/}
-                    {/*            itemTextStyle={{ color: '#222' }}*/}
-                    {/*            itemsContainerStyle={{ maxHeight: 140 }}*/}
-                    {/*            items={items}*/}
-                    {/*            // defaultIndex={2}*/}
-                    {/*            chip={true}*/}
-                    {/*            resetValue={false}*/}
-                    {/*            textInputProps={*/}
-                    {/*                {*/}
-                    {/*                    placeholder: "Search your product..",*/}
-                    {/*                    // underlineColorAndroid: "transparent",*/}
-                    {/*                    style: {*/}
-                    {/*                        padding: 12,*/}
-                    {/*                        borderWidth: 1,*/}
-                    {/*                        borderColor: '#ccc',*/}
-                    {/*                        borderRadius: 5,*/}
-                    {/*                    },*/}
-                    {/*                    // onTextChange: text => alert(text)*/}
-                    {/*                }*/}
-                    {/*            }*/}
-                    {/*            listProps={*/}
-                    {/*                {*/}
-                    {/*                    // nestedScrollEnabled: true,*/}
-                    {/*                }*/}
-                    {/*            }*/}
-                    {/*        />*/}
-                    {/*    </View>*/}
-
-                    {/*    <View style={{flex:2}}>*/}
-                    {/*        <IconButton*/}
-                    {/*            icon="plus"*/}
-                    {/*            color={Colors.lightBlue500}*/}
-                    {/*            size={30}*/}
-                    {/*            onPress={() => this.goProductList()}*/}
-                    {/*        />*/}
-                    {/*    </View>*/}
-
-                    {/*    <View style={{flex:2}}>*/}
-                    {/*        <IconButton*/}
-                    {/*            icon="cog"*/}
-                    {/*            color={Colors.lightBlue500}*/}
-                    {/*            size={30}*/}
-                    {/*            onPress={() => getData()}*/}
-                    {/*        />*/}
-                    {/*    </View>*/}
-
-                    {/*</View>*/}
-                    <View style={{flex:1,alignItems: 'center', justifyContent: 'center'}}>
-                        <View style={{height:20}} />
-                        <Text style={{fontSize:32,fontWeight:"bold",color:"#33c37d"}}>Cart food</Text>
-                        <View style={{height:10}} />
                         <View style={{flex:2}}>
                             <IconButton
                                 icon="plus"
@@ -237,94 +309,102 @@ class Sales extends Component {
                                 onPress={() => this.goProductList()}
                             />
                         </View>
-                        <View style={{flex:1}}>
 
-                            <ScrollView>
 
-                                {
-                                    this.state.dataCart.map((item)=>{
-                                        return(
-                                            <View style={{width:1000,margin:10,backgroundColor:'transparent', flexDirection:'row', borderBottomWidth:2, borderColor:"#cccccc", paddingBottom:10}}>
-                                                <Image resizeMode={"contain"} style={{width:100,height:100}} source={{uri: item.image}} />
-                                                <View style={{flex:1, backgroundColor:'transparent', padding:10, justifyContent:"space-between"}}>
-                                                    <View>
-                                                        <Text style={{fontWeight:"bold", fontSize:20}}>{item.product_id}</Text>
-                                                        <Text>Lorem Ipsum de food</Text>
-                                                    </View>
-                                                    <View style={{flexDirection:'row',justifyContent:'space-between'}}>
-                                                        <Text style={{fontWeight:'bold',color:"#33c37d",fontSize:20}}>${item.product_name}</Text>
-                                                        <View style={{flexDirection:'row', alignItems:'center'}}>
-                                                            <TouchableOpacity>
-                                                                <Icon name="ios-remove-circle" size={35} color={"#33c37d"} />
-                                                            </TouchableOpacity>
-                                                            <Text style={{paddingHorizontal:8, fontWeight:'bold', fontSize:18}}>5</Text>
-                                                            <TouchableOpacity>
-                                                                <Icon name="ios-add-circle" size={35} color={"#33c37d"} />
-                                                            </TouchableOpacity>
-                                                        </View>
-                                                    </View>
-                                                </View>
-                                            </View>
-                                        )
-                                    })
-                                }
-
-                                <View style={{height:20}} />
-
-                                <TouchableOpacity style={{
-                                    backgroundColor:"#33c37d",
-                                    width:100,
-                                    alignItems:'center',
-                                    padding:10,
-                                    borderRadius:5,
-                                    margin:20
-                                }}>
-                                    <Text style={{
-                                        fontSize:24,
-                                        fontWeight:"bold",
-                                        color:'white'
-                                    }}>
-                                        CHECKOUT
-                                    </Text>
-                                </TouchableOpacity>
-
-                                <View style={{height:20}} />
-                            </ScrollView>
-                        </View>
 
                     </View>
+
+
+
+                    <Table borderStyle={{ borderWidth: 1 }}>
+                        <Row
+                            data={state.tableHead}
+                            style={styles.head}
+                            textStyle={styles.text}
+                        />
+                        {tableData.map((rowData, index) => (
+                            <TableWrapper key={index} style={styles.row}>
+                                {rowData.map((cellData, cellIndex) => (
+                                    <Cell
+                                        key={cellIndex}
+                                        data={cellIndex === 6 ? element(cellData, index):cellIndex === 3 ? qty(cellData,index) : cellData}
+                                        textStyle={styles.text}
+                                    />
+
+                                ))}
+
+
+                            </TableWrapper>
+                        ))}
+                    </Table>
+
+
+                    <View style={{flex: 1,flexDirection:'row',justifyContent:'flex-end',paddingTop:30}}>
+                        <Button iconLeft success onPress={this.clearCart}>
+                            <Icon name="trash" />
+                            <Text style={[Style.addManageBtn]}>Clear</Text>
+
+                        </Button>
+                    </View>
+
+
+
+
+
+
+
+
+
                 </ScrollView>
 
 
 
 
 
-            </Fragment>
+            )
+        }
 
 
-        );
+
     }
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, padding: 16, paddingTop: 30, backgroundColor: '#fff' },
-    header: { height: 50, backgroundColor: '#00cccc' },
-    text: { maxWidth:80,textAlign: 'center', fontWeight: '100' },
-    head_text: { maxWidth:80,textAlign: 'center', fontWeight: 'bold',color:'white' },
-    dataWrapper: { marginTop: -1 },
-    row: { flex:2,height: 40, backgroundColor: '#E7E6E1' },
-    btn: { width: 58, height: 18, backgroundColor: '#78B7BB',  borderRadius: 2 },
-    btnText: { textAlign: 'center', color: '#fff' }
+    container: {
+        flex: 1,
+        padding: 16,
+        paddingTop: 30,
+        backgroundColor: "#f0f3f5"
+    },
+    head: { height: 40, backgroundColor: "#00cccc" },
+    text: { margin: 6,fontSize:10 },
+    row: { flexDirection: "row", backgroundColor: "white" },
+    btn: {
+        width: 58,
+        height: 18,
+        backgroundColor: "black",
+        borderRadius: 2,
+        alignSelf: "center"
+    },
+    btnText: { textAlign: "center", color: "#fff" }
 });
 
 
-const cell_styles = StyleSheet.create({
-    container: { flex: 1, padding: 16, paddingTop: 30, backgroundColor: '#fff' },
-    head: { height: 50, backgroundColor: '#808B97' },
-    text: { margin: 6 },
-    row: { flex:5,flexDirection: 'row', backgroundColor: '#FFF1C1' },
-    btn: { width: 58, height: 50, backgroundColor: '#78B7BB',  borderRadius: 2 },
-    btnText: { textAlign: 'center', color: '#fff' }
+const style = StyleSheet.create({
+    container: {
+        width: '100%',
+        height: 300,
+        padding: 16,
+        paddingTop: 100,
+        backgroundColor: '#fff',
+    },
+    cell: {
+        borderWidth: 1,
+        borderColor: '#ddd',
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
 });
 
 export default Sales;

@@ -10,6 +10,15 @@ export default StyleSheet.create({
         margin:5,
     },
 
+    SalestextInput: {
+        height: 35,
+        borderColor: 'gray',
+        borderRadius:10,
+        borderWidth: 1,
+         margin:5,
+        fontSize:10
+    },
+
     textInputSearch: {
         height: 40,
         borderColor: '#00cccc',

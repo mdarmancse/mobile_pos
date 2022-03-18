@@ -34,13 +34,7 @@ class CartProductList extends Component {
     constructor(props) {
 
         super(props);
-        const elementButton = (value) => (
-            <TouchableOpacity onPress={() => this._alertIndex(value)}>
-                <View style={styles.btn}>
-                    <Text style={styles.btnText}>{value}</Text>
-                </View>
-            </TouchableOpacity>
-        );
+
         this.state = {
             loading: false,
             product_data: [],
@@ -53,8 +47,10 @@ class CartProductList extends Component {
 
 
             search:"",
+            plus_btn:false,
 
-            tableHead: ["Item Name", "Model", "Stock", "Price","Status"],
+
+            tableHead: ["Item Name","SN", "Model", "Stock", "Price","Status"],
             tableData1: [
                 ["T. Walker", "870", "3", "d","ad"],
                 ["S. Weintraub", "650", "c", "d","ad"],
@@ -73,10 +69,7 @@ class CartProductList extends Component {
     static navigationOptions = {
         header: null
     };
-    _alertIndex(data,index) {
-        console.log(data);
-         Alert.alert(`This is row ${data + 1}`);
-    }
+
     componentDidMount(): void {
 
 
@@ -219,31 +212,66 @@ class CartProductList extends Component {
 
     }
 
-    onClickAddCart(data){
+    onClickAddCart(data,index){
+
+        // console.log(data[0])
+        // return
 
         const itemcart = {
-            data: data,
+            product_name: data[0],
+            product_sn: data[1],
+            product_model: data[2],
+            product_stock: data[3],
+            product_rate: data[4],
+            product_id: data[5],
+            quantity:1,
 
         }
 
+        let id=data[5];
+
         AsyncStorage.getItem('cart').then((datacart)=>{
             if (datacart !== null) {
+
+
                 // We have data!!
                 const cart = JSON.parse(datacart)
-                cart.push(itemcart)
+
+                const checkId = (cart, id) => {
+                    const requiredIndex = cart.findIndex(el => {
+                        return el.product_id === String(id);
+                    });
+
+
+                    if (requiredIndex === -1){
+                        cart.push(itemcart)
+                        alert("Add Sale")
+
+                    }else{
+
+                        alert("Already added in Sale ")
+                    }
+                };
+                checkId(cart, id);
+                //console.log(cart)
+               //
                 AsyncStorage.setItem('cart',JSON.stringify(cart));
+                // this.setState({plus_btn:true})
             }
             else{
                 const cart  = []
                 cart.push(itemcart)
                 AsyncStorage.setItem('cart',JSON.stringify(cart));
+                alert("Add Cart")
             }
-            alert("Add Cart")
+
         })
             .catch((err)=>{
                 alert(err)
             })
     }
+
+
 
 
 
@@ -260,11 +288,16 @@ class CartProductList extends Component {
                     icon="plus"
                     color={Colors.lightBlue500}
                     size={30}
-                    onPress={()=>this._alertIndex(data,index)}
+                    onPress={()=>this.onClickAddCart(data,index)}
+                    disabled={this.state.plus_btn}
                 />
             </TouchableOpacity>
         );
-        const tableData = this.state.product_data.map(record=>([record.product_name, record.product_model, record.stock,record.price,'']));
+
+
+
+
+        const tableData = this.state.product_data.map(record=>([record.product_name,record.serial_no, record.product_model, record.stock,record.price,record.product_id]));
 
 
 
@@ -284,7 +317,15 @@ class CartProductList extends Component {
 
             return (
 
-                <ScrollView style={styles.container} >
+                <ScrollView style={styles.container}
+
+                            refreshControl={
+                                <RefreshControl
+                                    refreshing={false}
+                                    onRefresh={this.pullRefresh}
+                                />
+                            }
+                >
                     <Table borderStyle={{ borderWidth: 1 }}>
                         <Row
                             data={state.tableHead}
@@ -296,7 +337,7 @@ class CartProductList extends Component {
                                 {rowData.map((cellData, cellIndex) => (
                                     <Cell
                                         key={cellIndex}
-                                        data={cellIndex === 4 ? element(cellData, index) : cellData}
+                                        data={cellIndex === 5 ? element(rowData, cellIndex) : cellData}
                                         textStyle={styles.text}
                                     />
                                 ))}
@@ -305,30 +346,12 @@ class CartProductList extends Component {
                     </Table>
 
 
-                    {/*<View style={{flex:2}}>*/}
-                    {/*    <IconButton*/}
-                    {/*        icon="cog"*/}
-                    {/*        color={Colors.red600}*/}
-                    {/*        size={30}*/}
-                    {/*        onPress={() => storeData()}*/}
-                    {/*    />*/}
-                    {/*</View>*/}
+
                 </ScrollView>
 
 
 
-                // <ScrollView >
-                //
-                //     <FlatList
-                //         data={this.state.product_data}
-                //         renderItem={({item})=>this.renderItem(item)}
-                //         keyExtractor={item =>item.product_id}
-                //         ListHeaderComponent={this.renderHeader}
-                //         onRefresh={()=>this.pullRefresh()}
-                //         refreshing={this.state.pull_refresh}
-                //     />
-                //
-                // </ScrollView>
+
 
             )
         }
@@ -346,7 +369,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#f0f3f5"
     },
     head: { height: 40, backgroundColor: "#00cccc" },
-    text: { margin: 6 },
+    text: { margin: 6,fontSize:12 },
     row: { flexDirection: "row", backgroundColor: "white" },
     btn: {
         width: 58,
