@@ -13,6 +13,7 @@ import Error from '../components/Error';
 
 
 import Style from '../assets/style'
+import {RNToasty} from "react-native-toasty";
 // import {Form} from "react-native-form-component";
 
 
@@ -177,9 +178,11 @@ class About extends Component {
 
 
         RestClient.PostRequest(AppUrl.insert_product,formData).then(result => {
-            console.log(result)
+           // console.log(result)
+            RNToasty.Success({
+                title: 'Product Inserted !'
+            })
 
-            Alert.alert('Product Inserted');
 
         }).catch(error => {
 

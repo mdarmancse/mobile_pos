@@ -7,7 +7,7 @@ import {
     StyleSheet,
     StatusBar,
 
-
+    ToastAndroid,
     List,
     ScrollView,
     Image, Alert, RefreshControl, TextInput
@@ -28,6 +28,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {datetime} from "react-table/src/sortTypes";
 // import { AsyncStorage } from 'react-native';
 
+import { RNToasty } from 'react-native-toasty'
 
 class CartProductList extends Component {
 
@@ -224,7 +225,7 @@ class CartProductList extends Component {
             product_stock: data[3],
             product_rate: data[4],
             product_id: data[5],
-            total: '',
+            total: 0,
             quantity:1,
 
         }
@@ -246,11 +247,18 @@ class CartProductList extends Component {
 
                     if (requiredIndex === -1){
                         cart.push(itemcart)
-                        alert("Add Sale")
+                        RNToasty.Success({
+                            title: 'Add to sale !'
+                        })
+                      //  ToastAndroid.show("Add to sale !",ToastAndroid.LONG);
 
                     }else{
+                        RNToasty.Error({
+                            title: 'Already added in Sale  !'
+                        })
+                        // ToastAndroid.show("Already added in Sale  !",ToastAndroid.LONG);
 
-                        alert("Already added in Sale ")
+
                     }
                 };
                 checkId(cart, id);
@@ -263,7 +271,10 @@ class CartProductList extends Component {
                 const cart  = []
                 cart.push(itemcart)
                 AsyncStorage.setItem('cart',JSON.stringify(cart));
-                alert("Add Cart")
+                RNToasty.Success({
+                    title: 'Add to sale !'
+                })
+                // ToastAndroid.show("Add to sale !",ToastAndroid.LONG);
             }
 
         })

@@ -24,10 +24,14 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 
+import Toast from 'react-native-toast-message';
+import RNToasty from "react-native-toasty";
+
 const App: () => React$Node = () => {
   return (
     <>
       <StatusBar barStyle="dark-content" />
+
       <SafeAreaView>
         <ScrollView
           contentInsetAdjustmentBehavior="automatic"
@@ -68,6 +72,10 @@ const App: () => React$Node = () => {
           </View>
         </ScrollView>
       </SafeAreaView>
+      <RNToasty
+        position='bottom'
+        bottomOffset={20}
+    />
     </>
   );
 };

@@ -11,6 +11,7 @@ import { FormItem } from 'react-native-form-component';
 import Style from '../assets/style'
 import Loader from '../components/Loader';
 import Error from '../components/Error';
+import {RNToasty} from "react-native-toasty";
 
 class About extends Component {
 
@@ -132,9 +133,11 @@ class About extends Component {
 
 
         RestClient.PostRequest(AppUrl.Update_product,formData).then(result => {
-            console.log(result)
+           // console.log(result)
+            RNToasty.Success({
+                title: 'Product Updated !'
+            })
 
-            Alert.alert('Product Updated');
 
         }).catch(error => {
 

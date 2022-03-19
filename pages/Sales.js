@@ -8,7 +8,8 @@ import {
     ScrollView,
     StyleSheet,
     TextInput,
-    TouchableOpacity
+    TouchableOpacity,
+    ToastAndroid
 } from 'react-native';
 import {Navigation} from 'react-native-navigation';
 import SideMenu from "./SideMenu";
@@ -61,6 +62,7 @@ var items = [
         name: 'Swift',
     },
 ];
+
 class Sales extends Component {
     constructor(props) {
         super(props);
@@ -132,6 +134,35 @@ class Sales extends Component {
         dataCar.splice(i,1)
         this.setState({dataCart:dataCar})
 
+        this.calculation()
+    }
+
+    calculation=()=>{
+        // const data = {
+        //     "idtransact1":  { "amount": 3000 },
+        //     "idtransact2":  { "amount": 3000 }
+        // };
+
+        const dataCar = this.state.dataCart;
+
+
+        let paid_amount=this.state.paid_amount;
+        let due_amount=this.state.due_amount;
+        let tax=this.state.tax;
+        let discount=this.state.discount;
+
+        // alert(parseInt(discount))
+        console.log('cal'+discount)
+        //  console.log(tax)
+        //  console.log(due_amount)
+        //  console.log(paid_amount)
+
+        let sum=0;
+        Object.values(dataCar).forEach((x)=>sum+= parseInt(x.total));
+        let grand_total=sum-discount-paid_amount;
+        this.setState({grand_total:grand_total.toFixed(2)});
+
+
     }
 
     goProductList=()=>{
@@ -184,6 +215,7 @@ class Sales extends Component {
          dataCar[i].quantity = text;
          dataCar[i].total = text*rate;
         this.setState({dataCart:dataCar})
+        this.calculation()
     }
 
     clearCart = async () => {
@@ -203,45 +235,29 @@ class Sales extends Component {
     disOnchange=(text)=>{
 
         this.setState({discount:text});
-
+        console.log('dis'+text)
+        this.calculation()
     }
 
     taxOnchange=(text)=>{
 
         this.setState({tax:text});
-
+        this.calculation()
     }
     paidOnchange=(text)=>{
 
         this.setState({paid_amount:text});
-
+        this.calculation()
     }
 
     dueOnchange=(text)=>{
 
-        // const data = {
-        //     "idtransact1":  { "amount": 3000 },
-        //     "idtransact2":  { "amount": 3000 }
-        // };
-
-        const dataCar = this.state.dataCart;
-
-     //   console.log(dataCar)
-
-        var sum=0;
-
-
-
-        Object.values(dataCar).forEach((x)=>sum+= parseInt(x.total))
-
-
-       // alert(sum)
-
-       // console.log(sum)
-
-        this.setState({due_amount:text,grand_total:sum.toFixed(2)});
+        this.setState({due_amount:text});
+        this.calculation()
 
     }
+
+
 
 
 
@@ -415,7 +431,10 @@ class Sales extends Component {
                                     keyboardType='numeric'
                                     style={[Style.textInput]}
                                     onChangeText={text => this.disOnchange(text)}
+
                                 />
+
+
                                 <Text style={[Style.text]}>Tax:</Text>
                                 <TextInput
                                     placeholder="0.00"
