@@ -211,7 +211,7 @@ class About extends Component {
         )})
 
         return (
-
+            <>
             <ScrollView>
             <SafeAreaView style={{flex:100,width:'100%',height:'100%'}}>
                 <View style={{flex:2,flexDirection:'row'}}>
@@ -365,14 +365,7 @@ class About extends Component {
 
 
 
-                        <Footer >
-                            <FooterTab>
-                                <Button type="submit" style={{backgroundColor:'#00cccc'}}
-                                        onPress={() => this.AddProduct()}>
-                                    <Text style={[Style.textBtn]}>Add Product</Text>
-                                </Button>
-                            </FooterTab>
-                        </Footer>
+
 
 
 
@@ -385,8 +378,15 @@ class About extends Component {
             </SafeAreaView>
 
     </ScrollView>
-
-
+                <Footer >
+                    <FooterTab>
+                        <Button type="submit" style={{backgroundColor:'#00cccc'}}
+                                onPress={() => this.AddProduct()}>
+                            <Text style={[Style.textBtn]}>Add Product</Text>
+                        </Button>
+                    </FooterTab>
+                </Footer>
+</>
         );
     }
 }

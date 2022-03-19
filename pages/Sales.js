@@ -1,8 +1,8 @@
 import React, { Component, Fragment } from 'react';
-import {View, Tex, Input, Button, Icon, Text} from 'native-base';
+import {View, Tex, Input, Button, Icon, Text, Footer, FooterTab} from 'native-base';
 import {
     Alert,
-    Image,
+    Image, Picker,
     RefreshControl,
     SafeAreaView,
     ScrollView,
@@ -21,6 +21,8 @@ import Style from "../assets/style";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Loader from "../components/Loader";
 import Error from "../components/Error";
+
+
 
 import { Col, Row as RW, Grid } from 'react-native-easy-grid';
 
@@ -75,6 +77,13 @@ class Sales extends Component {
             dataCart:[],
             qty:"1",
             total:"0",
+
+            discount:'',
+            tax:'',
+            paid_amount:'',
+            due_amoount:'',
+
+            grand_total:'0.00',
 
 
 
@@ -171,7 +180,9 @@ class Sales extends Component {
     }
     qtyOnchange=(text,i)=>{
         const dataCar = this.state.dataCart
+        let rate=dataCar[i].product_rate
          dataCar[i].quantity = text;
+         dataCar[i].total = text*rate;
         this.setState({dataCart:dataCar})
     }
 
@@ -189,6 +200,49 @@ class Sales extends Component {
 
 
     }
+    disOnchange=(text)=>{
+
+        this.setState({discount:text});
+
+    }
+
+    taxOnchange=(text)=>{
+
+        this.setState({tax:text});
+
+    }
+    paidOnchange=(text)=>{
+
+        this.setState({paid_amount:text});
+
+    }
+
+    dueOnchange=(text)=>{
+
+        // const data = {
+        //     "idtransact1":  { "amount": 3000 },
+        //     "idtransact2":  { "amount": 3000 }
+        // };
+
+        const dataCar = this.state.dataCart;
+
+     //   console.log(dataCar)
+
+        var sum=0;
+
+
+
+        Object.values(dataCar).forEach((x)=>sum+= parseInt(x.total))
+
+
+       // alert(sum)
+
+       // console.log(sum)
+
+        this.setState({due_amount:text,grand_total:sum.toFixed(2)});
+
+    }
+
 
 
 
@@ -238,9 +292,8 @@ class Sales extends Component {
         }else{
 
             return (
-
+                <>
                 <ScrollView style={styles.container}
-
                             refreshControl={
                                 <RefreshControl
                                     refreshing={false}
@@ -248,6 +301,7 @@ class Sales extends Component {
                                 />
                             }
                 >
+                    <SafeAreaView style={{flex:100,width:'100%',height:'100%',padding: 5}}>
                     <View style={{flex:10,flexDirection:'row'}}>
 
                         <View style={{flex:8}}>
@@ -302,12 +356,15 @@ class Sales extends Component {
                         </View>
 
                         <View style={{flex:2}}>
+
                             <IconButton
                                 icon="plus"
-                                color={Colors.lightBlue500}
+                                variant="solid"
+                                color={Colors.green700}
                                 size={30}
                                 onPress={() => this.goProductList()}
                             />
+
                         </View>
 
 
@@ -340,7 +397,7 @@ class Sales extends Component {
 
 
                     <View style={{flex: 1,flexDirection:'row',justifyContent:'flex-end',paddingTop:30}}>
-                        <Button iconLeft success onPress={this.clearCart}>
+                        <Button iconLeft danger onPress={this.clearCart}>
                             <Icon name="trash" />
                             <Text style={[Style.addManageBtn]}>Clear</Text>
 
@@ -348,19 +405,100 @@ class Sales extends Component {
                     </View>
 
 
+                        <View style={{flex:20,flexDirection:'row'}}>
+
+                            <View style={{flex:10,marginTop:5,marginBottom:5}}>
+
+                                <Text style={[Style.text]}>Discount:</Text>
+                                <TextInput
+                                    placeholder="0.00"
+                                    keyboardType='numeric'
+                                    style={[Style.textInput]}
+                                    onChangeText={text => this.disOnchange(text)}
+                                />
+                                <Text style={[Style.text]}>Tax:</Text>
+                                <TextInput
+                                    placeholder="0.00"
+                                    keyboardType='numeric'
+                                    style={[Style.textInput]}
+                                    onChangeText={text => this.taxOnchange(text)}
+                                />
 
 
 
 
 
 
+
+                            </View>
+
+                            <View style={{flex:10,marginTop:5,marginBottom:5}}>
+
+                                <Text style={[Style.text]}>Paid Amount:</Text>
+                                <TextInput
+                                    placeholder="0.00"
+                                    keyboardType='numeric'
+                                    style={[Style.textInput]}
+                                    onChangeText={text => this.paidOnchange(text)}
+                                />
+                                <Text style={[Style.text]}>Due Amount:</Text>
+                                <TextInput
+                                    placeholder="0.00"
+                                    keyboardType='numeric'
+                                    style={[Style.textInput]}
+                                    onChangeText={text => this.dueOnchange(text)}
+                                />
+
+
+
+
+
+
+
+                            </View>
+
+
+
+
+                        </View>
+
+
+
+
+
+
+                </SafeAreaView>
 
                 </ScrollView>
 
 
+            <Footer>
+
+                <FooterTab>
+                    <Button type="submit" style={{backgroundColor:'red'}}
+                            onPress={() => this.AddProduct()}>
+                        <Text style={[Style.textFooterBtn]}>Submit With Print</Text>
+                    </Button>
+                    <Button type="submit" style={{backgroundColor:'green'}}
+                            onPress={() => this.AddProduct()}>
+                        <Text style={[Style.textFooterBtn]}>Submit</Text>
+                    </Button>
+
+                    <Button  style={{backgroundColor:'black'}}
+                             onPress={() => this.AddProduct()}>
+                        <Text style={[Style.textFooterBtn]}>Full Paid</Text>
+                    </Button>
+                    <View disabled style={{backgroundColor:'golden',width:100}}
+                          onPress={() => this.AddProduct()}>
+                        <Text style={[Style.textFooterBtn]}>Grand Total:</Text>
+                        <Text style={[Style.textFooterBtn]}>{this.state.grand_total} TK</Text>
+                    </View>
+
+                </FooterTab>
+            </Footer>
 
 
-
+            </>
             )
         }
 
@@ -372,9 +510,7 @@ class Sales extends Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 16,
-        paddingTop: 30,
-        backgroundColor: "#f0f3f5"
+        backgroundColor: "white",
     },
     head: { height: 40, backgroundColor: "#00cccc" },
     text: { margin: 6,fontSize:10 },
@@ -387,6 +523,9 @@ const styles = StyleSheet.create({
         alignSelf: "center"
     },
     btnText: { textAlign: "center", color: "#fff" }
+
+
+
 });
 
 
@@ -397,6 +536,7 @@ const style = StyleSheet.create({
         padding: 16,
         paddingTop: 100,
         backgroundColor: '#fff',
+        borderColor: 'blue'
     },
     cell: {
         borderWidth: 1,
@@ -406,5 +546,6 @@ const style = StyleSheet.create({
         alignItems: 'center'
     },
 });
+
 
 export default Sales;

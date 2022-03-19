@@ -32,6 +32,7 @@ export default StyleSheet.create({
         marginBottom:5,
         marginLeft:9,
         marginTop:5,
+        fontSize:14
     },
     box: {
         width: 50,
@@ -40,6 +41,14 @@ export default StyleSheet.create({
     textBtn:{
         color:'white',
         fontSize:15,
+        textAlign:'center',
+        fontWeight: 'bold',
+
+    },
+
+    textFooterBtn:{
+        color:'white',
+        fontSize:12,
         textAlign:'center',
         fontWeight: 'bold',
 
