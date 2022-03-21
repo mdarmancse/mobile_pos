@@ -24,56 +24,19 @@ import Loader from "../components/Loader";
 import Error from "../components/Error";
 
 
-
-import { Col, Row as RW, Grid } from 'react-native-easy-grid';
-
-
-var items = [
-    {
-        id: 1,
-        name: 'JavaScript',
-    },
-    {
-        id: 2,
-        name: 'Java',
-    },
-    {
-        id: 3,
-        name: 'Ruby',
-    },
-    {
-        id: 4,
-        name: 'React Native',
-    },
-    {
-        id: 5,
-        name: 'PHP',
-    },
-    {
-        id: 6,
-        name: 'Python',
-    },
-    {
-        id: 7,
-        name: 'Go',
-    },
-    {
-        id: 8,
-        name: 'Swift',
-    },
-];
-
 class Sales extends Component {
     constructor(props) {
         super(props);
         this.state = {
             selectedItems: [],
+            selectedCust: [],
 
             tableHead: ['Item Name','SN','Av Qty','Qty', 'Rate','Total', 'Action'],
             widthArr: [100, 100,100, 150,100, 100,100],
 
 
             product_data:[],
+            customer_data:[],
 
 
             dataCart:[],
@@ -90,13 +53,15 @@ class Sales extends Component {
 
 
 
+
+
         }
     }
 
     componentDidMount(): void {
 
 
-        RestClient.GetRequest(AppUrl.product_list).then(result=>{
+        RestClient.GetRequest(AppUrl.product_list_drop).then(result=>{
 
             this.setState({
                 product_data: result.response.product_list
@@ -105,15 +70,24 @@ class Sales extends Component {
             })
 
 
+        }).catch(error=>{
 
+        })
+
+        RestClient.GetRequest(AppUrl.customer_list_drop).then(result=>{
+
+            this.setState({
+                customer_data: result.response.customer_list
+
+
+            })
 
         }).catch(error=>{
 
         })
 
 
-
-        AsyncStorage.getItem('cart').then((cart)=>{
+            AsyncStorage.getItem('cart').then((cart)=>{
             if (cart !== null) {
                 // We have data!!
                 const cartfood = JSON.parse(cart)
@@ -346,7 +320,7 @@ class Sales extends Component {
                                 }}
                                 itemTextStyle={{ color: '#222' }}
                                 itemsContainerStyle={{ maxHeight: 140 }}
-                                items={items}
+                                items={this.state.product_data}
                                 // defaultIndex={2}
                                 chip={true}
                                 resetValue={false}
@@ -381,6 +355,62 @@ class Sales extends Component {
                                 onPress={() => this.goProductList()}
                             />
 
+                        </View>
+
+
+
+                    </View>
+                    <View style={{flex:10,flexDirection:'row'}}>
+
+                        <View style={{flex:8}}>
+
+
+                            <SearchableDropdown
+                                multi={true}
+                                selectedItems={this.state.selectedCust}
+                                onItemSelect={(item) => {
+                                    const items = this.state.selectedCust;
+                                    items.push(item)
+                                    this.setState({ selectedCust: items });
+                                }}
+                                containerStyle={{ padding: 5 }}
+                                onRemoveItem={(item, index) => {
+                                    const items = this.state.selectedCust.filter((sitem) => sitem.id !== item.id);
+                                    this.setState({ selectedCust: items });
+                                }}
+                                itemStyle={{
+                                    padding: 10,
+                                    marginTop: 2,
+                                    backgroundColor: '#ddd',
+                                    borderColor: '#bbb',
+                                    borderWidth: 1,
+                                    borderRadius: 5,
+                                }}
+                                itemTextStyle={{ color: '#222' }}
+                                itemsContainerStyle={{ maxHeight: 140 }}
+                                items={this.state.customer_data}
+                                // defaultIndex={2}
+                                chip={true}
+                                resetValue={false}
+                                textInputProps={
+                                    {
+                                        placeholder: "Select Customer..",
+                                        // underlineColorAndroid: "transparent",
+                                        style: {
+                                            padding: 12,
+                                            borderWidth: 1,
+                                            borderColor: '#ccc',
+                                            borderRadius: 5,
+                                        },
+                                        // onTextChange: text => alert(text)
+                                    }
+                                }
+                                listProps={
+                                    {
+                                        // nestedScrollEnabled: true,
+                                    }
+                                }
+                            />
                         </View>
 
 
