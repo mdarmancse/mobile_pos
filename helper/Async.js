@@ -1,35 +1,9 @@
-import axios from 'axios';
+
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {RNToasty} from "react-native-toasty";
 
-class RestClient {
-
-
- static GetRequest=(getUrl)=>{
-     return axios.get(getUrl).then(response=>{
-         return response.data;
-
-     }).catch(error=>{
-         return null;
-     })
-
- };
-
-    static PostRequest=(postUrl,postJson)=>{
-        let config={
-            headers:{'content-type':'multipart/form-data'}
-
-        }
-
-        return axios.post(postUrl,postJson,config).then(response=>{
-            return response.data;
-
-        }).catch(error=>{
-            return null;
-        })
-
-    }
+class Async {
 
     static cart_product=(data)=>{
 
@@ -102,4 +76,4 @@ class RestClient {
     }
 
 }
-export default  RestClient;
+export default  Async;

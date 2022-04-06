@@ -22,6 +22,8 @@ import Style from "../assets/style";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Loader from "../components/Loader";
 import Error from "../components/Error";
+import Async from "../helper/Async";
+
 
 
 class Sales extends Component {
@@ -30,6 +32,8 @@ class Sales extends Component {
         this.state = {
             selectedItems: [],
             selectedCust: [],
+            customer_name:'',
+            customer_id:'',
 
             tableHead: ['Item Name','SN','Av Qty','Qty', 'Rate','Total', 'Action'],
             widthArr: [100, 100,100, 150,100, 100,100],
@@ -86,21 +90,23 @@ class Sales extends Component {
 
         })
 
-
-            AsyncStorage.getItem('cart').then((cart)=>{
+        AsyncStorage.getItem('cart').then((cart)=>{
             if (cart !== null) {
                 // We have data!!
                 const cartfood = JSON.parse(cart)
                 this.setState({dataCart:cartfood})
 
             }
+        }).catch((err)=>{
+            //alert(err)
         })
-            .catch((err)=>{
-                alert(err)
-            })
 
 
 
+        // setInterval(() => {
+        //
+        //
+        // }, 1000);
     }
 
     removeValue = async (i) => {
@@ -224,13 +230,29 @@ class Sales extends Component {
         this.calculation()
     }
 
+    getId=(item)=>{
+
+      alert(item)
+    }
+
     dueOnchange=(text)=>{
 
         this.setState({due_amount:text});
         this.calculation()
 
     }
+    onClickAddCart(data){
+       // console.log(data)
 
+        const item_data=[
+            data.name,data.serial_no,data.product_model,data.stock,data.price,data.id,
+        ]
+       // console.log(item_data)
+        Async.cart_product(item_data);
+
+
+
+    }
 
 
 
@@ -283,7 +305,10 @@ class Sales extends Component {
 
             return (
                 <>
+
+
                 <ScrollView style={styles.container}
+                            keyboardShouldPersistTaps = 'always'
                             refreshControl={
                                 <RefreshControl
                                     refreshing={false}
@@ -291,19 +316,24 @@ class Sales extends Component {
                                 />
                             }
                 >
-                    <SafeAreaView style={{flex:100,width:'100%',height:'100%',padding: 5}}>
                     <View style={{flex:10,flexDirection:'row'}}>
 
                         <View style={{flex:8}}>
 
 
                             <SearchableDropdown
-                                multi={true}
+                                multi={false}
                                 selectedItems={this.state.selectedItems}
                                 onItemSelect={(item) => {
+
+
                                     const items = this.state.selectedItems;
                                     items.push(item)
                                     this.setState({ selectedItems: items });
+                                    this.onClickAddCart(item);
+
+                                    //alert(item.id)
+                                    //alert(item)
                                 }}
                                 containerStyle={{ padding: 5 }}
                                 onRemoveItem={(item, index) => {
@@ -319,14 +349,14 @@ class Sales extends Component {
                                     borderRadius: 5,
                                 }}
                                 itemTextStyle={{ color: '#222' }}
-                                itemsContainerStyle={{ maxHeight: 140 }}
+                                itemsContainerStyle={{ maxHeight: 200,zIndex:-2 }}
                                 items={this.state.product_data}
-                                // defaultIndex={2}
-                                chip={true}
+                                defaultIndex={2}
+                                chip={false}
                                 resetValue={false}
                                 textInputProps={
                                     {
-                                        placeholder: "Search your product..",
+                                        placeholder: "Select Product..",
                                         // underlineColorAndroid: "transparent",
                                         style: {
                                             padding: 12,
@@ -334,12 +364,12 @@ class Sales extends Component {
                                             borderColor: '#ccc',
                                             borderRadius: 5,
                                         },
-                                        // onTextChange: text => alert(text)
+                                        //onTextChange: text => alert(text)
                                     }
                                 }
                                 listProps={
                                     {
-                                        // nestedScrollEnabled: true,
+                                        nestedScrollEnabled: true,
                                     }
                                 }
                             />
@@ -360,62 +390,73 @@ class Sales extends Component {
 
 
                     </View>
-                    <View style={{flex:10,flexDirection:'row'}}>
+                        <View style={{flex:10,flexDirection:'row'}}>
 
-                        <View style={{flex:8}}>
+                            <View style={{flex:8}}>
 
+                                {/*<TextInput*/}
 
-                            <SearchableDropdown
-                                multi={true}
-                                selectedItems={this.state.selectedCust}
-                                onItemSelect={(item) => {
-                                    const items = this.state.selectedCust;
-                                    items.push(item)
-                                    this.setState({ selectedCust: items });
-                                }}
-                                containerStyle={{ padding: 5 }}
-                                onRemoveItem={(item, index) => {
-                                    const items = this.state.selectedCust.filter((sitem) => sitem.id !== item.id);
-                                    this.setState({ selectedCust: items });
-                                }}
-                                itemStyle={{
-                                    padding: 10,
-                                    marginTop: 2,
-                                    backgroundColor: '#ddd',
-                                    borderColor: '#bbb',
-                                    borderWidth: 1,
-                                    borderRadius: 5,
-                                }}
-                                itemTextStyle={{ color: '#222' }}
-                                itemsContainerStyle={{ maxHeight: 140 }}
-                                items={this.state.customer_data}
-                                // defaultIndex={2}
-                                chip={true}
-                                resetValue={false}
-                                textInputProps={
-                                    {
-                                        placeholder: "Select Customer..",
-                                        // underlineColorAndroid: "transparent",
-                                        style: {
-                                            padding: 12,
-                                            borderWidth: 1,
-                                            borderColor: '#ccc',
-                                            borderRadius: 5,
-                                        },
-                                        // onTextChange: text => alert(text)
+                                {/*    style={[Style.textInput]}*/}
+                                {/*    value={this.state.customer_id}*/}
+
+                                {/*/>*/}
+                                <SearchableDropdown
+                                    selectedItems={this.state.selectedCust}
+                                    onItemSelect={(item) => {
+                                        const items = this.state.selectedCust;
+                                        items.push(item)
+                                        this.setState({ selectedCust: items,customer_name:item.name,customer_id:item.id });
+
+                                    }}
+                                    containerStyle={{ padding: 5 }}
+                                    onRemoveItem={(item, index) => {
+                                        const items = this.state.selectedCust.filter((sitem) => sitem.id !== item.id);
+                                        this.setState({ selectedCust: items });
+                                    }}
+                                    itemStyle={{
+                                        padding: 10,
+                                        marginTop: 2,
+                                        backgroundColor: '#ddd',
+                                        borderColor: '#bbb',
+                                        borderWidth: 1,
+                                        borderRadius: 5,
+                                    }}
+                                    itemTextStyle={{ color: '#0a0a0a' }}
+                                    itemsContainerStyle={{ maxHeight: 200}}
+                                    items={this.state.customer_data}
+                                    defaultIndex={2}
+                                    chip={false}
+                                    resetValue={false}
+                                    textInputProps={
+                                        {
+                                            placeholder: "Select Customer..",
+                                            underlineColorAndroid: "transparent",
+                                            style: {
+                                                padding: 12,
+                                                borderWidth: 1,
+                                                borderColor: '#ccc',
+                                                borderRadius: 5,
+                                            },
+                                            value:state.customer_name
+                                            // onTextChange: text => alert(text)
+                                        }
                                     }
-                                }
-                                listProps={
-                                    {
-                                        // nestedScrollEnabled: true,
+                                    listProps={
+                                        {
+                                            nestedScrollEnabled: true,
+                                        }
                                     }
-                                }
-                            />
+                                />
+                            </View>
+
+
+
                         </View>
 
 
 
-                    </View>
+                    <SafeAreaView style={{flex:100,width:'100%',height:'100%',padding: 5}}>
+
 
 
 
@@ -560,6 +601,8 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: "white",
+
+
     },
     head: { height: 40, backgroundColor: "#00cccc" },
     text: { margin: 6,fontSize:10 },
