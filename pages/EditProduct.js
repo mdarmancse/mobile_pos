@@ -144,49 +144,6 @@ class About extends Component {
         })
     }
 
-    nameOnchange=(text)=>{
-
-        this.setState({product_name:text});
-
-    }
-
-    snOnchange=(text)=>{
-
-        this.setState({sn:text});
-
-    }
-
-    unitOnchange=(text)=>{
-
-        this.setState({unit:text});
-
-    }
-    modelOnchange=(text)=>{
-
-        this.setState({product_model:text});
-
-    }
-
-    taxOnchange=(text)=>{
-
-        this.setState({vat:text});
-
-    }
-    salePriceOnchange=(text)=>{
-
-        this.setState({sale_price:text});
-
-    }
-
-    supplierPriceOnchange=(text)=>{
-
-        this.setState({supplier_price:text});
-
-    }
-
-
-
-
 
     render() {
 
@@ -246,7 +203,7 @@ class About extends Component {
                                     placeholder="Product Name"
                                     style={[Style.textInput]}
                                     value={this.state.product_name}
-                                    onChangeText={text => this.nameOnchange(text)}
+                                    onChangeText={text => this.setState({product_name:text})}
 
                                 />
                                 <Text style={[Style.text]}>SN:</Text>
@@ -254,7 +211,7 @@ class About extends Component {
                                     placeholder="SN"
                                     style={[Style.textInput]}
                                     value={this.state.sn}
-                                    onChangeText={text => this.snOnchange(text)}
+                                    onChangeText={text => this.setState({sn:text})}
                                 />
                                 <Text style={[Style.text]}>Category:</Text>
                                 <View
@@ -279,7 +236,7 @@ class About extends Component {
                                     placeholder="Model"
                                     style={[Style.textInput]}
                                     value={this.state.product_model}
-                                    onChangeText={text => this.modelOnchange(text)}
+                                    onChangeText={text => this.setState({product_model:text})}
                                 />
 
                                 <Text style={[Style.text]}>Sale Price:</Text>
@@ -287,7 +244,7 @@ class About extends Component {
                                     placeholder="Sale Price"
                                     style={[Style.textInput]}
                                     value={this.state.sale_price}
-                                    onChangeText={text => this.salePriceOnchange(text)}
+                                    onChangeText={text => this.setState({sale_price:text})}
                                 />
                                 <Text style={[Style.text]}>Supplier Name:</Text>
                                 <View
@@ -319,13 +276,14 @@ class About extends Component {
                                     placeholder="Barcode"
                                     style={[Style.textInput]}
                                     value={this.state.barcode}
+                                    onChangeText={text => this.setState({barcode:text})}
                                 />
                                 <Text style={[Style.text]}>Unit:</Text>
                                 <TextInput
                                     placeholder="Unit"
                                     style={[Style.textInput]}
                                     value={this.state.unit}
-                                    onChangeText={text => this.unitOnchange(text)}
+                                    onChangeText={text => this.setState({unit:text})}
                                 />
                                 <Text style={[Style.text]}>Product Type:</Text>
                                 <View
@@ -349,7 +307,7 @@ class About extends Component {
                                     placeholder="VAT/TAX"
                                     style={[Style.textInput]}
                                     value={this.state.vat}
-                                    onChangeText={text => this.taxOnchange(text)}
+                                    onChangeText={text => this.setState({vat:text})}
                                 />
 
                                 <Text style={[Style.text]}>Supplier Price:</Text>
@@ -357,7 +315,7 @@ class About extends Component {
                                     placeholder="Supplier Price"
                                     style={[Style.textInput]}
                                     value={this.state.supplier_price}
-                                    onChangeText={text => this.supplierPriceOnchange(text)}
+                                    onChangeText={text => this.setState({supplier_price:text})}
                                 />
 
 

@@ -16,8 +16,8 @@ class Async {
             product_stock: data[3],
             product_rate: data[4],
             product_id: data[5],
-            total: 0,
-            quantity:1,
+            total: '0',
+            quantity:'0',
 
         }
 

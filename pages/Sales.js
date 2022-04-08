@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component, Fragment,createRef} from 'react';
 import {View, Tex, Input, Button, Icon, Text, Footer, FooterTab} from 'native-base';
 import {
     Alert,
@@ -23,6 +23,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import Loader from "../components/Loader";
 import Error from "../components/Error";
 import Async from "../helper/Async";
+import {RNToasty} from "react-native-toasty";
 
 
 
@@ -50,9 +51,11 @@ class Sales extends Component {
             discount:'',
             tax:'',
             paid_amount:'',
-            due_amoount:'',
+            due_amount:'',
+
 
             grand_total:'0.00',
+            gg:'0.00',
 
 
 
@@ -60,7 +63,10 @@ class Sales extends Component {
 
 
         }
+
+
     }
+
 
     componentDidMount(): void {
 
@@ -90,24 +96,13 @@ class Sales extends Component {
 
         })
 
-        AsyncStorage.getItem('cart').then((cart)=>{
-            if (cart !== null) {
-                // We have data!!
-                const cartfood = JSON.parse(cart)
-                this.setState({dataCart:cartfood})
-
-            }
-        }).catch((err)=>{
-            //alert(err)
-        })
+      this.car_data();
+        this.calculation();
 
 
-
-        // setInterval(() => {
-        //
-        //
-        // }, 1000);
     }
+
+
 
     removeValue = async (i) => {
         const dataCar = this.state.dataCart
@@ -117,33 +112,9 @@ class Sales extends Component {
         this.calculation()
     }
 
-    calculation=()=>{
-        // const data = {
-        //     "idtransact1":  { "amount": 3000 },
-        //     "idtransact2":  { "amount": 3000 }
-        // };
-
-        const dataCar = this.state.dataCart;
 
 
-        let paid_amount=this.state.paid_amount;
-        let due_amount=this.state.due_amount;
-        let tax=this.state.tax;
-        let discount=this.state.discount;
 
-        // alert(parseInt(discount))
-        console.log('cal'+discount)
-        //  console.log(tax)
-        //  console.log(due_amount)
-        //  console.log(paid_amount)
-
-        let sum=0;
-        Object.values(dataCar).forEach((x)=>sum+= parseInt(x.total));
-        let grand_total=sum-discount-paid_amount;
-        this.setState({grand_total:grand_total.toFixed(2)});
-
-
-    }
 
     goProductList=()=>{
         Navigation.push('CenterScreen',{
@@ -204,7 +175,11 @@ class Sales extends Component {
             const dataCar = this.state.dataCart
             let length=dataCar.length;
             dataCar.splice(0,length)
-            this.setState({dataCart:dataCar})
+            this.setState({
+                dataCart:dataCar,
+
+            })
+            this.calculation()
 
         } catch(e) {
 
@@ -212,49 +187,108 @@ class Sales extends Component {
 
 
     }
-    disOnchange=(text)=>{
 
-        this.setState({discount:text});
-        console.log('dis'+text)
-        this.calculation()
-    }
 
-    taxOnchange=(text)=>{
+    car_data=()=>{
 
-        this.setState({tax:text});
-        this.calculation()
-    }
-    paidOnchange=(text)=>{
+        AsyncStorage.getItem('cart').then((cart)=>{
+            if (cart !== null) {
+                // We have data!!
+                const cartfood = JSON.parse(cart)
+                this.setState({dataCart:cartfood})
 
-        this.setState({paid_amount:text});
-        this.calculation()
-    }
-
-    getId=(item)=>{
-
-      alert(item)
-    }
-
-    dueOnchange=(text)=>{
-
-        this.setState({due_amount:text});
-        this.calculation()
+            }
+        }).catch((err)=>{
+            //alert(err)
+        })
 
     }
+
+
     onClickAddCart(data){
-       // console.log(data)
+
 
         const item_data=[
             data.name,data.serial_no,data.product_model,data.stock,data.price,data.id,
         ]
-       // console.log(item_data)
-        Async.cart_product(item_data);
 
+        Async.cart_product(item_data);
+       // console.log(this.state.dataCart)
+        setTimeout( () => {
+            this.car_data();
+            this.calculation()
+        },1000);
+
+
+    }
+    calculation=()=>{
+
+
+        const dataCar = this.state.dataCart;
+
+
+        let paid_amount=this.state.paid_amount;
+        let due_amount=this.state.due_amount;
+        let tax=this.state.tax;
+        let discount=this.state.discount;
+        let sum=0;
+        Object.values(dataCar).forEach((x)=>sum+= parseInt(x.total));
+        let grand_total=sum-discount;
+
+        let dues=grand_total-paid_amount
+
+        this.setState({
+            due_amount:dues.toFixed(2),
+            grand_total:grand_total.toFixed(2),
+
+
+        });
+
+        //   console.log(this.state.due_amount)
 
 
     }
 
+    full_paid=()=>{
 
+        let grand_total=this.state.grand_total;
+
+        this.setState({
+            due_amount:'0.00',
+            paid_amount:grand_total,
+
+        })
+
+    }
+
+    invoice_entry=()=>{
+
+        let formData=new FormData();
+        formData.append('product_id',this.state.barcode);
+        formData.append('product_name',this.state.product_name);
+        formData.append('model',this.state.product_model);
+        formData.append('price',this.state.sale_price);
+        formData.append('tax',this.state.vat);
+        formData.append('serial_no',this.state.sn);
+        formData.append('unit',this.state.unit);
+        formData.append('ptype_id',this.state.ptype_id);
+        formData.append('category_id',this.state.category_id);
+        formData.append('supplier_id',this.state.supplier_id);
+        formData.append('supplier_price',this.state.supplier_price);
+
+
+        RestClient.PostRequest(AppUrl.insert_product,formData).then(result => {
+            // console.log(result)
+            RNToasty.Success({
+                title: 'Product Inserted !'
+            })
+
+
+        }).catch(error => {
+
+        })
+
+    }
 
 
 
@@ -275,11 +309,15 @@ class Sales extends Component {
 
         const qty = (data,i) => (
 
+
+
             <TextInput
                 style={[Style.SalestextInput]}
                 keyboardType = 'numeric'
                 onChangeText={text => this.qtyOnchange(text,i)}
-                  value={dataCar[i].quantity}
+
+               // value={dataCar[i].quantity}
+                value={dataCar[i].quantity}
 
             />
         );
@@ -306,7 +344,6 @@ class Sales extends Component {
             return (
                 <>
 
-
                 <ScrollView style={styles.container}
                             keyboardShouldPersistTaps = 'always'
                             refreshControl={
@@ -316,6 +353,8 @@ class Sales extends Component {
                                 />
                             }
                 >
+
+
                     <View style={{flex:10,flexDirection:'row'}}>
 
                         <View style={{flex:8}}>
@@ -501,17 +540,20 @@ class Sales extends Component {
                                     placeholder="0.00"
                                     keyboardType='numeric'
                                     style={[Style.textInput]}
-                                    onChangeText={text => this.disOnchange(text)}
+                                    onChangeText={text => this.setState({discount:text})}
+                                    onEndEditing={() => this.calculation()}
+
 
                                 />
-
 
                                 <Text style={[Style.text]}>Tax:</Text>
                                 <TextInput
                                     placeholder="0.00"
                                     keyboardType='numeric'
                                     style={[Style.textInput]}
-                                    onChangeText={text => this.taxOnchange(text)}
+                                    onChangeText={text => this.setState({tax:text})}
+                                    onEndEditing={() => this.calculation()}
+
                                 />
 
 
@@ -529,20 +571,21 @@ class Sales extends Component {
                                     placeholder="0.00"
                                     keyboardType='numeric'
                                     style={[Style.textInput]}
-                                    onChangeText={text => this.paidOnchange(text)}
+                                    onChangeText={text => this.setState({paid_amount: text})}
+                                    onEndEditing={() => this.calculation()}
+                                    value={this.state.paid_amount}
                                 />
                                 <Text style={[Style.text]}>Due Amount:</Text>
+
                                 <TextInput
-                                    placeholder="0.00"
+                                    value={this.state.due_amount}
                                     keyboardType='numeric'
+                                    editable = {false}
                                     style={[Style.textInput]}
-                                    onChangeText={text => this.dueOnchange(text)}
+                                    onChangeText={text => this.setState({due_amount:text})}
+                                    onEndEditing={() => this.calculation()}
+
                                 />
-
-
-
-
-
 
 
                             </View>
@@ -570,16 +613,16 @@ class Sales extends Component {
                         <Text style={[Style.textFooterBtn]}>Submit With Print</Text>
                     </Button>
                     <Button type="submit" style={{backgroundColor:'green'}}
-                            onPress={() => this.AddProduct()}>
+                            onPress={() => this.invoice_entry()}>
                         <Text style={[Style.textFooterBtn]}>Submit</Text>
                     </Button>
 
                     <Button  style={{backgroundColor:'black'}}
-                             onPress={() => this.AddProduct()}>
+                             onPress={() => this.full_paid()}>
                         <Text style={[Style.textFooterBtn]}>Full Paid</Text>
                     </Button>
                     <View disabled style={{backgroundColor:'golden',width:100}}
-                          onPress={() => this.AddProduct()}>
+                          >
                         <Text style={[Style.textFooterBtn]}>Grand Total:</Text>
                         <Text style={[Style.textFooterBtn]}>{this.state.grand_total} TK</Text>
                     </View>
@@ -596,6 +639,9 @@ class Sales extends Component {
 
     }
 }
+
+
+
 
 const styles = StyleSheet.create({
     container: {
