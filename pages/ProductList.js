@@ -215,73 +215,7 @@ class ProductList extends Component {
         })
     }
 
-    // ChildView=({ProductId,ProductName,ProductModel,ProductUnit,ProductPrice,ProductImage})=>{
-    //
-    //     return(
-    //
-    //
-    //
-    //         <View style={styles.container}>
-    //
-    //             <View style={styles.item}>
-    //                 <View style={{flex:40}}>
-    //                     <Image style={{height:100,width:100,padding:2}} source={{uri:ProductImage}}/>
-    //
-    //                 </View>
-    //                 <View style={{backgroundColor:'white',flex:40}}>
-    //                     <Text  style={[Style.text]}>{ProductName}</Text>
-    //                     <Text style={[Style.text]}>{ProductModel}</Text>
-    //                     <Text  style={[Style.text]}>{ProductUnit}</Text>
-    //                     <Text style={[Style.text]}>{ProductPrice}</Text>
-    //
-    //                 </View>
-    //                 <View style={{flex:30,flexDirection:"row"}}>
-    //
-    //                     {/*<View style={{flex:1,marginTop:5}}>*/}
-    //
-    //                     {/*    <Button onPress={() => this._alertIndex(ProductName)}*/}
-    //                     {/*        style={{width:'100%'}} danger>*/}
-    //                     {/*        <Icon type="FontAwesome" name="trash" />*/}
-    //
-    //                     {/*    </Button>*/}
-    //
-    //                     {/*</View>*/}
-    //                     <View style={{flex:1,marginTop:5,padding:2}} >
-    //                         <IconButton
-    //                             icon="pencil"
-    //                             color={Colors.lightBlue500}
-    //                             size={30}
-    //                             onPress={() => this.goEditProduct(ProductId)}
-    //                         />
-    //                     </View>
-    //                     <View style={{flex:1,marginTop:5,padding:2}} >
-    //                         <IconButton
-    //                             icon="delete"
-    //                             color={Colors.red500}
-    //                             size={30}
-    //                             onPress={() => this.showConfirmDialogDelete(ProductId)}
-    //                         />
-    //                     </View>
-    //
-    //
-    //
-    //                 </View>
-    //             </View>
-    //
-    //
-    //
-    //
-    //         </View>
-    //
-    //
-    //
-    //     );
-    //
-    //
-    // }
-    showItem=(data)=>{
-        Alert.alert(data);
-    }
+
 
     renderHeader=()=>{
         const { search } = this.state;

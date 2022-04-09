@@ -264,28 +264,24 @@ class Sales extends Component {
     invoice_entry=()=>{
 
         let formData=new FormData();
-        formData.append('product_id',this.state.barcode);
-        formData.append('product_name',this.state.product_name);
-        formData.append('model',this.state.product_model);
-        formData.append('price',this.state.sale_price);
-        formData.append('tax',this.state.vat);
-        formData.append('serial_no',this.state.sn);
-        formData.append('unit',this.state.unit);
-        formData.append('ptype_id',this.state.ptype_id);
-        formData.append('category_id',this.state.category_id);
-        formData.append('supplier_id',this.state.supplier_id);
-        formData.append('supplier_price',this.state.supplier_price);
+        formData.append('customer_id',this.state.customer_id);
+        formData.append('paid_amount',this.state.paid_amount);
+        formData.append('due_amount',this.state.due_amount);
+        formData.append('grand_total',this.state.grand_total);
+        formData.append('tax',this.state.tax);
+        formData.append('product_data',this.state.dataCart);
 
 
-        RestClient.PostRequest(AppUrl.insert_product,formData).then(result => {
-            // console.log(result)
+        RestClient.PostRequest(AppUrl.insert_sale,formData).then(result => {
+            console.log(result)
             RNToasty.Success({
-                title: 'Product Inserted !'
+                title: 'Add sale successfully !'
             })
 
 
-        }).catch(error => {
 
+        }).catch(error => {
+            console.log(error)
         })
 
     }
