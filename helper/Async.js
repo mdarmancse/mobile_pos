@@ -22,56 +22,66 @@ class Async {
         }
 
         let id=data[5];
+        let stock=data[3];
 
-        AsyncStorage.getItem('cart').then((datacart)=>{
-            if (datacart !== null) {
-
-
-                // We have data!!
-                const cart = JSON.parse(datacart)
-
-                const checkId = (cart, id) => {
-                    const requiredIndex = cart.findIndex(el => {
-                        return el.product_id === String(id);
-                    });
+        if (stock > 0){
+            AsyncStorage.getItem('cart').then((datacart)=>{
+                if (datacart !== null) {
 
 
-                    if (requiredIndex === -1){
-                        cart.push(itemcart)
-                        RNToasty.Success({
-                            title: 'Add to sale !'
-                        })
-                        //  ToastAndroid.show("Add to sale !",ToastAndroid.LONG);
+                    // We have data!!
+                    const cart = JSON.parse(datacart)
 
-                    }else{
-                        RNToasty.Error({
-                            title: 'Already added in Sale  !'
-                        })
-                        // ToastAndroid.show("Already added in Sale  !",ToastAndroid.LONG);
+                    const checkId = (cart, id) => {
+                        const requiredIndex = cart.findIndex(el => {
+                            return el.product_id === String(id);
+                        });
 
 
-                    }
-                };
-                checkId(cart, id);
-                //console.log(cart)
-                //
-                AsyncStorage.setItem('cart',JSON.stringify(cart));
-                // this.setState({plus_btn:true})
-            }
-            else{
-                const cart  = []
-                cart.push(itemcart)
-                AsyncStorage.setItem('cart',JSON.stringify(cart));
-                RNToasty.Success({
-                    title: 'Add to sale !'
-                })
-                // ToastAndroid.show("Add to sale !",ToastAndroid.LONG);
-            }
+                        if (requiredIndex === -1){
+                            cart.push(itemcart)
+                            RNToasty.Success({
+                                title: 'Add to sale !'
+                            })
+                            //  ToastAndroid.show("Add to sale !",ToastAndroid.LONG);
 
-        })
-            .catch((err)=>{
-                alert(err)
+                        }else{
+                            RNToasty.Error({
+                                title: 'Already added in Sale  !'
+                            })
+                            // ToastAndroid.show("Already added in Sale  !",ToastAndroid.LONG);
+
+
+                        }
+                    };
+                    checkId(cart, id);
+                    //console.log(cart)
+                    //
+                    AsyncStorage.setItem('cart',JSON.stringify(cart));
+                    // this.setState({plus_btn:true})
+                }
+                else{
+                    const cart  = []
+                    cart.push(itemcart)
+                    AsyncStorage.setItem('cart',JSON.stringify(cart));
+                    RNToasty.Success({
+                        title: 'Add to sale !'
+                    })
+                    // ToastAndroid.show("Add to sale !",ToastAndroid.LONG);
+                }
+
             })
+                .catch((err)=>{
+                    alert(err)
+                })
+        }else{
+            RNToasty.Error({
+                title: 'Out of stock !!!'
+            })
+
+        }
+
+
 
     }
 

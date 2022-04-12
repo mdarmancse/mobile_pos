@@ -264,12 +264,15 @@ class Sales extends Component {
     invoice_entry=()=>{
 
         let formData=new FormData();
+
+        let product_data=JSON.stringify(this.state.dataCart)
         formData.append('customer_id',this.state.customer_id);
         formData.append('paid_amount',this.state.paid_amount);
         formData.append('due_amount',this.state.due_amount);
         formData.append('grand_total',this.state.grand_total);
+        formData.append('total_discount',this.state.discount);
         formData.append('tax',this.state.tax);
-        formData.append('product_data',this.state.dataCart);
+        formData.append('product_data',product_data);
 
 
         RestClient.PostRequest(AppUrl.insert_sale,formData).then(result => {

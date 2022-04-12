@@ -216,6 +216,7 @@ class CartProductList extends Component {
 
     onClickAddCart(data){
 
+
         Async.cart_product(data);
 
     }
