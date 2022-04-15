@@ -24,7 +24,7 @@ import Loader from "../components/Loader";
 import Error from "../components/Error";
 import Async from "../helper/Async";
 import {RNToasty} from "react-native-toasty";
-
+import RNPrint from 'react-native-print';
 
 
 class Sales extends Component {
@@ -42,6 +42,9 @@ class Sales extends Component {
 
             product_data:[],
             customer_data:[],
+            invoice_data:[],
+            company_data:[],
+            software_data:[],
 
 
             dataCart:[],
@@ -56,6 +59,10 @@ class Sales extends Component {
 
             grand_total:'0.00',
             gg:'0.00',
+
+
+
+            invoice_id:''
 
 
 
@@ -102,6 +109,190 @@ class Sales extends Component {
 
     }
 
+
+
+    async printHTML(invoice_id) {
+
+      //  let invoice_id='20220412172535';
+        RestClient.GetRequest(AppUrl.invoice_data+'/'+invoice_id).then(result=>{
+
+
+
+            this.setState({
+                invoice_data: result.response.invoice_data,
+                company_data: result.response.company_info,
+                software_data: result.response.software_setting,
+
+
+
+            })
+
+            this.clearCart();
+
+
+
+        }).catch(error=>{
+
+        })
+        var company=this.state.company_data[0];
+        var software=this.state.software_data[0];
+        var invoice=this.state.invoice_data[0];
+
+        var invoice_details=this.state.invoice_data;
+
+        const tbody=invoice_details.map(myList=>{
+            return  '<tr> ' +
+                '<td align="center">'+myList.product_name+'</td>' +
+                '<td align="center">'+myList.quantity+'</td>' +
+                '<td align="right">'+myList.total_price+'</td>' +
+                '</tr>'
+        })
+        // var tbody='<tr> ' +
+        //     '<td>Item</td>' +
+        //     '<td>QTY</td>' +
+        //     '<td>Total</td>' +
+        //     '</tr>';
+
+
+        await RNPrint.print({
+            html: '<div style="border: 0 !important; margin-left: -3mm !important;">\n' +
+                '\n' +
+                '\n' +
+                '                            <div style="width: 100%;text-align: center;">\n' +
+                '                                <img src="data:image/png;base64,http://devenport.co/erp/./my-assets/image/logo/120eba431e9cfedb515965d8a09ac982.png" style="width: 20mm; height: auto;">\n' +
+                '                            </div>\n' +
+                '                            <div >\n' +
+                '                                <div align="center" style="line-height: 1; border: 0; padding:0">\n' +
+                '                                    \n' +
+                '                                    <span style="font-size: 12px !important;">\n' +
+                '                                        <strong>'+company["company_name"]+'</strong>\n' +
+                '                                    </span><br>\n' +
+                '                                    <span style="font-size: 12px !important;">'+company["address"]+'</span><br>\n' +
+                '                                    <span style="font-size: 12px !important;">'+company["mobile"]+'</span><br>\n' +
+                '                                    \n' +
+                '                                    <span ></span>\n' +
+                '                                </div>\n' +
+                '                            </div>\n' +
+                '\n' +
+                '\n' +
+                '                            <div  align="center" style="font-size: 11px; margin-top: 0.2cm !important">\n' +
+                '                                <div><b>'+invoice["customer_name"]+'</b><br>\n' +
+                '                                                                                                                01714494966\n' +
+                '                                                                    </div>\n' +
+                '                            </div>\n' +
+                '                            <div align="center">\n' +
+                '                                <div style="margin-top: 0.3cm !important; font-size: 11px !important">\n' +
+                '                                    <nobr>\n' +
+                '                                        <date>\n' +
+                '                                            Date: '+invoice["date"]+'                                       </date>\n' +
+                '                                    </nobr>\n' +
+                '                                </div>\n' +
+                '\n' +
+                '                                <div>\n' +
+                '                                    <div>\n' +
+                '                                        <nobr style="font-size: 11px;">\n' +
+                '                                            <strong>Invoice No : '+invoice["invoice"]+' </strong>\n' +
+                '                                        </nobr>\n' +
+                '                                    </div>\n' +
+                '                                </div>\n' +
+                '                            </div>\n' +
+                '                            ===============================\n' +
+                '                            <div style="margin: 0; padding:0">\n' +
+                '                                <table  id="tbl">\n' +
+                '                                    <thead>\n' +
+                '                                        <tr><th class="text-center pr">Product</th>\n' +
+                '                                        <th class="text-center td-style">Qnty</th>\n' +
+                '                                        <th class="text-center td-style">Amount</th>\n' +
+                '                                    </tr></thead>\n' +
+                '                                        <td colspan="5" class="minpos-bordertop">\n' +
+                '                                            <nobr></nobr>\n' +
+                '                                        </td>\n' +
+                '                                    </tr>\n' +
+                '                                    <tr>\n'+ tbody +
+
+                '                                        <td colspan="5" class="minpos-bordertop">\n' +
+                '                                            <nobr></nobr>\n' +
+                '                                        </td>\n' +
+                '                                    </tr>\n' +
+                '                                    <tr>\n' +
+                '                                        <td align="left">\n' +
+                '                                            <nobr></nobr>\n' +
+                '                                        </td>\n' +
+                '                                        <td align="right" colspan="1">\n' +
+                '                                            <nobr>Total</nobr>\n' +
+                '                                        </td>\n' +
+                '                                        <td align="right" class="td-style">\n' +
+                '                                            <nobr>\n' +
+                '                                                '+invoice["total_amount"]+'                                           </nobr>\n' +
+                '                                        </td>\n' +
+                '                                    </tr>\n' +
+
+                '\n' +
+                '                                    <tr>\n' +
+                '                                        <td align="left">\n' +
+                '                                            <nobr></nobr>\n' +
+                '                                        </td>\n' +
+                '                                        <td align="right" colspan="1">\n' +
+                '                                            <nobr>Paid Amount</nobr>\n' +
+                '                                        </td>\n' +
+                '                                        <td align="right" class="td-style">\n' +
+                '                                            <nobr>\n' +
+                '                                                '+invoice["paid_amount"]+'                                           </nobr>\n' +
+                '                                        </td>\n' +
+                '                                    </tr>\n' +
+                '                                    <tr>\n' +
+                '                                        <td align="left">\n' +
+                '                                            <nobr></nobr>\n' +
+                '                                        </td>\n' +
+                '                                        <td align="right" colspan="1">\n' +
+                '                                            <nobr>Due Amount</nobr>\n' +
+                '                                        </td>\n' +
+                '                                        <td align="right" class="td-style">\n' +
+                '                                            <nobr>\n' +
+                '                                                '+invoice["due_amount"]+'                                           </nobr>\n' +
+                '                                        </td>\n' +
+                '                                    </tr>\n' +
+                '                                                                                                                                                                                    <tr>\n' +
+                '                                        <td colspan="7" class="minpos-bordertop">\n' +
+                '                                            <nobr></nobr>\n' +
+                '                                        </td>\n' +
+                '                                    </tr>\n' +
+                '                                    <tr>\n' +
+                '                                        <td align="left">\n' +
+                '                                            <nobr></nobr>\n' +
+                '                                        </td>\n' +
+                '                                        <td align="right" colspan="1">\n' +
+                '                                            <nobr><strong>Grand Total</strong></nobr>\n' +
+                '                                        </td>\n' +
+                '                                        <td align="right" class="td-style">\n' +
+                '                                            <nobr>\n' +
+                '                                                <strong>\n' +
+                '                                                   '+invoice["total_amount"]+'                                                 </strong>\n' +
+                '                                            </nobr>\n' +
+                '                                        </td>\n' +
+                '                                    </tr>\n' +
+                '\n' +
+                '                                    <tr>\n' +
+                '                                        <td colspan="7" class="minpos-bordertop">\n' +
+                '                                            <nobr></nobr>\n' +
+                '                                        </td>\n' +
+                '                                    </tr>\n' +
+                '                                    \n' +
+                '                                    \n' +
+                '\n' +
+                '                                    \n' +
+                '                                    \n' +
+                '\n' +
+                '                                </tbody></table>\n' +
+                '\n' +
+                '                                <div style="text-align:center; margin-top: 0.5cm; font-size: 11px">\n' +
+                '                                    Powered by <strong>M-POS(Arman)</strong>\n' +
+                '\n' +
+                '                                </div>\n' +
+                '                            </div>\n' +
+                '                        </div>'
+        })
+    }
 
 
     removeValue = async (i) => {
@@ -163,10 +354,20 @@ class Sales extends Component {
     qtyOnchange=(text,i)=>{
         const dataCar = this.state.dataCart
         let rate=dataCar[i].product_rate
-         dataCar[i].quantity = text;
-         dataCar[i].total = text*rate;
-        this.setState({dataCart:dataCar})
-        this.calculation()
+        let stock=dataCar[i].product_stock
+        if (text > stock){
+
+            RNToasty.Error({
+                title: 'You can sale maximum '+ stock + ' for this item'
+            })
+        }else {
+            dataCar[i].quantity = text;
+            dataCar[i].total = text*rate;
+            this.setState({dataCart:dataCar})
+            this.calculation()
+        }
+
+
     }
 
     clearCart = async () => {
@@ -263,29 +464,92 @@ class Sales extends Component {
 
     invoice_entry=()=>{
 
-        let formData=new FormData();
 
-        let product_data=JSON.stringify(this.state.dataCart)
-        formData.append('customer_id',this.state.customer_id);
-        formData.append('paid_amount',this.state.paid_amount);
-        formData.append('due_amount',this.state.due_amount);
-        formData.append('grand_total',this.state.grand_total);
-        formData.append('total_discount',this.state.discount);
-        formData.append('tax',this.state.tax);
-        formData.append('product_data',product_data);
+        let length=this.state.dataCart.length;
+
+        if (length > 0){
+            let formData=new FormData();
+
+            let product_data=JSON.stringify(this.state.dataCart)
+            formData.append('customer_id',this.state.customer_id);
+            formData.append('paid_amount',this.state.paid_amount);
+            formData.append('due_amount',this.state.due_amount);
+            formData.append('grand_total',this.state.grand_total);
+            formData.append('total_discount',this.state.discount);
+            formData.append('tax',this.state.tax);
+            formData.append('product_data',product_data);
 
 
-        RestClient.PostRequest(AppUrl.insert_sale,formData).then(result => {
-            console.log(result)
-            RNToasty.Success({
-                title: 'Add sale successfully !'
+            RestClient.PostRequest(AppUrl.insert_sale,formData).then(result => {
+                // console.log(result.response.status)
+
+                if (result.response.status==200){
+                    RNToasty.Success({
+                        title: 'Add sale successfully !'
+
+                    })
+                    this.setState({invoice_id:result.response.invoice_id})
+                    this.clearCart();
+                    // this.printHTML(result.response.invoice_id)
+                }
+
+
+
+            }).catch(error => {
+                console.log(error)
+            })
+        }else{
+            RNToasty.Error({
+                title: 'Please select product for sale !!!'
             })
 
+        }
 
 
-        }).catch(error => {
-            console.log(error)
-        })
+
+    }
+    invoice_entry_with_print=()=>{
+        let length=this.state.dataCart.length;
+
+        if (length > 0){
+            let formData=new FormData();
+
+            let product_data=JSON.stringify(this.state.dataCart)
+            formData.append('customer_id',this.state.customer_id);
+            formData.append('paid_amount',this.state.paid_amount);
+            formData.append('due_amount',this.state.due_amount);
+            formData.append('grand_total',this.state.grand_total);
+            formData.append('total_discount',this.state.discount);
+            formData.append('tax',this.state.tax);
+            formData.append('product_data',product_data);
+
+
+            RestClient.PostRequest(AppUrl.insert_sale,formData).then(result => {
+                // console.log(result.response.status)
+
+                if (result.response.status==200){
+                    RNToasty.Success({
+                        title: 'Add sale successfully !'
+
+                    })
+                    this.setState({invoice_id:result.response.invoice_id})
+
+                    this.printHTML(result.response.invoice_id)
+
+                    // this.printHTML(result.response.invoice_id)
+                }
+
+
+
+            }).catch(error => {
+                console.log(error)
+            })
+        }else{
+            RNToasty.Error({
+                title: 'Please select product for sale !!!'
+            })
+        }
+
 
     }
 
@@ -608,7 +872,7 @@ class Sales extends Component {
 
                 <FooterTab>
                     <Button type="submit" style={{backgroundColor:'red'}}
-                            onPress={() => this.AddProduct()}>
+                            onPress={() => this.invoice_entry_with_print()}>
                         <Text style={[Style.textFooterBtn]}>Submit With Print</Text>
                     </Button>
                     <Button type="submit" style={{backgroundColor:'green'}}

@@ -13,6 +13,7 @@ class AppUrl {
     static Update_product=this.BaseUrl+'/Update_product';
     static insert_product=this.BaseUrl+'/insert_product';
     static insert_sale=this.BaseUrl+'/insert_sale';
+    static invoice_data=this.BaseUrl+'/invoice_data';
 
 
 }

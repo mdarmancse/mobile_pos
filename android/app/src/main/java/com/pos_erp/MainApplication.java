@@ -16,6 +16,7 @@ import com.reactnativenavigation.react.NavigationReactNativeHost;
 
 import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
 
+
 public class MainApplication extends NavigationApplication {
 
   private final ReactNativeHost mReactNativeHost =
