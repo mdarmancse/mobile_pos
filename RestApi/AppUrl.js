@@ -14,6 +14,7 @@ class AppUrl {
     static insert_product=this.BaseUrl+'/insert_product';
     static insert_sale=this.BaseUrl+'/insert_sale';
     static invoice_data=this.BaseUrl+'/invoice_data';
+    static login=this.BaseUrl+'/login';
 
 
 }
