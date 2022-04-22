@@ -334,6 +334,7 @@ class Sales extends Component {
                         background: {
                             color:'#00cccc'
                         },
+                        backButton: { color: '#ffffff' }
 
 
                     }

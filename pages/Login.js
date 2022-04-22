@@ -19,8 +19,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import Async from "../helper/Async";
 import Nav from "../helper/Navigator";
-
-class Home extends Component {
+class Login extends Component {
 
 constructor(props) {
     super(props)
@@ -34,6 +33,12 @@ constructor(props) {
 
 }
 
+
+
+
+
+
+
     navigationButtonPressed({componentId}){
         Navigation.mergeOptions(this.props.componentId,{
             sideMenu: {
@@ -46,24 +51,37 @@ constructor(props) {
 
     }
 
-    componentDidMount(): void {
 
-        this.retrieveData()
+    on_login=()=>{
+        let formData=new FormData();
+        formData.append('email',this.state.email);
+        formData.append('password',this.state.password);
 
-    }
 
-    retrieveData = async () => {
-        try {
-            const value = await AsyncStorage.getItem('user');
-            if (value== null) {
-                Nav.goLoginPage();
+
+        RestClient.PostRequest(AppUrl.login,formData).then(result => {
+
+            if (result.response.status=='ok') {
+
+                     const user_data = JSON.stringify(result.response.user_data)
+
+                        const key='user';
+
+                      Async.storeData(key,user_data)
+
+                         Nav.goSales();
+            }else{
+
+                RNToasty.Error({
+                    title: 'Login Failed..! Please check your username and password!!'
+                })
             }
-        } catch (error) {
-            // Error retrieving data
-        }
-    };
 
 
+        }).catch(error => {
+
+        })
+    }
 
 
 
@@ -77,8 +95,38 @@ constructor(props) {
         return (
 
         <>
-            <Text>Home Page</Text>
 
+            <View style={styles.container}>
+                <Image style={styles.image} source={require("../assets/images/log2.png")} />
+
+
+                <View style={styles.inputView}>
+                    <TextInput
+                        style={styles.TextInput}
+                        placeholder="Email."
+                        placeholderTextColor="#003f5c"
+                        onChangeText={text => this.setState({email:text})}
+
+                    />
+                </View>
+
+                <View style={styles.inputView}>
+                    <TextInput
+                        style={styles.TextInput}
+                        placeholder="Password."
+                        placeholderTextColor="#003f5c"
+                        secureTextEntry={true}
+                        onChangeText={text => this.setState({password:text})}
+
+                    />
+                </View>
+
+                <TouchableOpacity style={styles.loginBtn} onPress={this.on_login}>
+                    <Text style={styles.loginText}>LOGIN</Text>
+                </TouchableOpacity>
+
+
+            </View>
         </>
         );
     }
@@ -130,4 +178,4 @@ const styles = StyleSheet.create({
         backgroundColor: "#00cccc",
     },
 });
-export default Home;
+export default Login;

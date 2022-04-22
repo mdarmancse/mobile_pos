@@ -1,11 +1,27 @@
 import React, {Component} from 'react';
 import {Button, Icon, Text, View} from 'native-base';
-import {Image,StyleSheet} from "react-native";
+import {Image, StyleSheet, TouchableOpacity} from "react-native";
 import {Navigation} from 'react-native-navigation';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import Async from "../helper/Async";
 
 
 
 class SideMenu extends Component {
+
+    constructor(props) {
+        super(props);
+
+        this.state={
+
+            user_data:[]
+        }
+    }
+
+    componentDidMount(): void {
+
+        this._retrieveData();
+    }
 
     goProduct=()=>{
         Navigation.push('CenterScreen',{
@@ -34,6 +50,7 @@ class SideMenu extends Component {
                         background: {
                             color:'#00cccc'
                         },
+                        backButton: { color: '#ffffff' }
 
 
                     }
@@ -73,6 +90,7 @@ class SideMenu extends Component {
                         background: {
                             color:'#00cccc'
                         },
+                        backButton: { color: '#ffffff' }
 
 
                     }
@@ -111,6 +129,7 @@ class SideMenu extends Component {
                         background: {
                             color:'#00cccc'
                         },
+                        backButton: { color: '#ffffff' }
 
 
                     }
@@ -123,31 +142,44 @@ class SideMenu extends Component {
 
 
     }
+    _retrieveData = async () => {
+        try {
+            const value = await AsyncStorage.getItem('user');
+            if (value !== null) {
+                // We have data!!
 
+
+                this.setState({user_data:JSON.parse(value)})
+
+
+            }
+        } catch (error) {
+            // Error retrieving data
+        }
+    };
+
+    onLogout=()=>{
+
+        Async.clearData();
+
+    }
 
     render() {
+        const state=this.state;
         return (
             <View style={{flex:2}}>
 
 
 
-                <View style={{flex:0.27,marginRight:60,backgroundColor:'white'}}>
+                <View style={{flex:0.40,marginRight:60,backgroundColor:'white'}}>
                     <View style={{flex:1,flexDirection:'row',backgroundColor:'#00cccc',
                         justifyContent:'center'}}>
 
-                        <View style={[styles.profileImgContainer,{ borderColor: 'black', borderWidth:2 }]}>
-                            <Image source={require("../assets/images/dp.png")}/>
+                        <View >
+                            <Image style={[styles.image]} source={{uri: state.user_data.image}}/>
+                            <Text style={[styles.text]}>{state.user_data.user_name} </Text>
+                            <Text style={[styles.email_text]}>{state.user_data.user_email}</Text>
                         </View>
-                        <View style={{flex:0.5,justifyContent:'center'}}>
-
-                                <Text style={[styles.text]}>Md Arman Ullah </Text>
-                            <Text style={[styles.email_text]}>amd55077@gmail.com</Text>
-
-
-                        </View>
-
-
-
 
 
                     </View>
@@ -178,6 +210,11 @@ class SideMenu extends Component {
                             <Text style={[styles.side_menu_text,{marginLeft:8}]}>Share</Text>
                         </View>
 
+                        <View style={{marginTop:20,flexDirection:'row'}}>
+
+                            <Icon type="FontAwesome" name="rocket" />
+                            <Text onPress={this.onLogout}style={[styles.side_menu_text,{marginLeft:8}]}>Log Out</Text>
+                        </View>
 
                     </View>
 
@@ -235,7 +272,15 @@ const styles = StyleSheet.create({
             textShadowColor: 'red',
             textShadowOffset: { width: 2, height: 2 },
             textShadowRadius : 5
-        }
+        },
+    image: {
+        width: 150,
+        height: 150,
+        borderRadius: 150 / 2,
+        overflow: "hidden",
+        borderWidth: 3,
+        borderColor: "rgba(16,0,0,0.5)"
+    }
 
 
 

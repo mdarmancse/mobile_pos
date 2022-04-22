@@ -9,11 +9,14 @@ import ProductList from './pages/ProductList';
 import EditProduct from './pages/EditProduct';
 import Product from './pages/Product';
 import SideMenu from './pages/SideMenu';
+import Login from "./pages/Login";
+import Async from "./helper/Async";
+import {Image, SafeAreaView, TextView} from 'react-native';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import {Image,SafeAreaView} from 'react-native';
+import React  from 'react';
 
-
-
+Navigation.registerComponent('LoginPage', () => Login);
 Navigation.registerComponent('HomePage', () => Home);
 Navigation.registerComponent('SalePage', () => Sales);
 Navigation.registerComponent('ManageProduct', () => ManageProduct);
@@ -24,6 +27,8 @@ Navigation.registerComponent('EditProduct', () =>EditProduct );
 Navigation.registerComponent('AboutPage', () => About);
 
 Navigation.registerComponent('SideMenu', () => SideMenu);
+
+
 
 
 const stack={
@@ -50,6 +55,7 @@ const stack={
                         }
 
 
+
                     }
                 }
 
@@ -61,6 +67,23 @@ const stack={
     ]
 
 }
+// const stack={
+//
+//
+//     id:"CenterScreen",
+//
+//     children:[
+//         {
+//             component:{
+//                 name:'LoginPage',
+//             },
+//
+//         }
+//
+//
+//     ]
+//
+// }
 
 
 
@@ -82,5 +105,11 @@ Navigation.events().registerAppLaunchedListener(() => {
 
     });
 });
+
+
+
+
+
+
 
 

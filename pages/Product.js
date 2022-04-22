@@ -103,6 +103,7 @@ class About extends Component {
                         background: {
                             color:'#00cccc'
                         },
+                        backButton: { color: '#ffffff' }
 
 
                     }

@@ -89,6 +89,7 @@ class ProductList extends Component {
                         background: {
                             color:'#00cccc'
                         },
+                        backButton: { color: '#ffffff' }
 
 
                     }
@@ -129,6 +130,7 @@ class ProductList extends Component {
                         background: {
                             color:'#00cccc'
                         },
+                        backButton: { color: '#ffffff' }
 
 
                     }
