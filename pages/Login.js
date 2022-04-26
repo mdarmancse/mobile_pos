@@ -7,6 +7,7 @@ import {
     Image,
     TextInput,
     TouchableOpacity,
+    BackHandler
 } from "react-native";
 
 import {Navigation} from 'react-native-navigation';
@@ -33,6 +34,19 @@ constructor(props) {
 
 }
 
+
+    componentWillMount() {
+        BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
+    }
+
+    componentWillUnmount() {
+        BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick);
+    }
+
+    handleBackButtonClick = () => {
+      //  this.props.navigation.goBack(null);
+        return true;
+    };
 
 
 

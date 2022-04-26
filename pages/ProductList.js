@@ -24,6 +24,7 @@ import StickyHeaderFooterScrollView from 'react-native-sticky-header-footer-scro
 
  // import SearchableFlatlist from "searchable-flatlist";
 import {SearchBar} from 'react-native-elements';
+import Nav from "../helper/Navigator";
 const data=[
     {key:"1",title:"Android"},
     {key:"2",title:"IOS"},
@@ -58,91 +59,9 @@ class ProductList extends Component {
 
     }
 
-    goEditProduct=(product_id)=>{
-
-        Navigation.push('CenterScreen',{
-
-            component:{
-                name:'EditProduct',
-                color: 'white',
-                passProps: {
-                    product_id: product_id,
-
-                },
-                options:{
-
-                    sideMenu:{
-                        left:{
-                            visible:false,
-
-
-                        }
-
-                    },
-                    topBar:{
-                        title:{
-                            text:'Edit Product',
-                            color: 'white',
-
-                        },
-
-                        background: {
-                            color:'#00cccc'
-                        },
-                        backButton: { color: '#ffffff' }
-
-
-                    }
-                }
-            }
-
-
-        })
 
 
 
-    }
-
-    goAddProduct=()=>{
-        Navigation.push('CenterScreen',{
-
-            component:{
-                name:'ProductPage',
-                color: 'white',
-
-                options:{
-
-                    sideMenu:{
-                        left:{
-                            visible:false,
-
-
-                        }
-
-                    },
-                    topBar:{
-                        title:{
-                            text:'Products',
-                            color: 'white',
-
-                        },
-
-                        background: {
-                            color:'#00cccc'
-                        },
-                        backButton: { color: '#ffffff' }
-
-
-                    }
-                }
-            }
-
-
-        })
-
-
-
-    }
 
     componentDidMount(): void {
 
@@ -193,7 +112,7 @@ class ProductList extends Component {
                 {
                     text: "Yes",
                     onPress: () => {
-                        this.productDelete(ProductId);
+                        Nav.productDelete(ProductId);
                     },
                 },
 
@@ -203,19 +122,7 @@ class ProductList extends Component {
             ]
         );
     };
-    productDelete=(product_id)=> {
 
-        RestClient.GetRequest(AppUrl.delete_product+'/?product_id='+product_id).then(result=>{
-
-            this.componentDidMount();
-
-
-
-
-        }).catch(error=>{
-
-        })
-    }
 
 
 
@@ -318,7 +225,7 @@ class ProductList extends Component {
                                 icon="pencil"
                                 color={Colors.lightBlue500}
                                 size={30}
-                                onPress={() => this.goEditProduct(item.product_id)}
+                                onPress={() => Nav.goEditProduct(item.product_id)}
                             />
                         </View>
                         <View style={{flex:1,marginTop:5,padding:2}} >
@@ -367,7 +274,7 @@ class ProductList extends Component {
                     <View style={{flex:2,flexDirection:'row',marginTop:5,marginBottom:5}}>
 
                         <View style={{flex:1}}>
-                            <Button iconLeft style={{width:'100%'}}  onPress={this.goAddProduct} dark>
+                            <Button iconLeft style={{width:'100%'}}  onPress={Nav.goAddProduct} dark>
                                 <Icon type="FontAwesome" name="plus" />
                                 <Text style={[Style.addManageBtn]}>Add Product</Text>
                             </Button>

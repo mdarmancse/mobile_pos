@@ -65,6 +65,16 @@ export default StyleSheet.create({
     searchBG:{
         backgroundColor:'#fffdeb',
 
+    },
+
+    cardFont:{
+        fontSize:22,
+        color:"rgba(59,68,59,0.65)"
+    },
+
+    cardHead:{
+        fontWeight:'bold'
     }
+
 
 });

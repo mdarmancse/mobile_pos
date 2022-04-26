@@ -1,10 +1,17 @@
 import React, {Component} from 'react';
 import {Button, Icon, Text, View} from 'native-base';
-import {Image, StyleSheet, TouchableOpacity} from "react-native";
+import {Alert, Image, StyleSheet, TouchableOpacity} from "react-native";
 import {Navigation} from 'react-native-navigation';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Async from "../helper/Async";
 
+import { Root, SPSheet,Popup } from 'react-native-popup-confirm-toast'
+const component = (props) => {
+    //hook or class
+    return null;
+
+    props.spSheet.hide();
+};
 
 
 class SideMenu extends Component {
@@ -17,6 +24,7 @@ class SideMenu extends Component {
             user_data:[]
         }
     }
+
 
     componentDidMount(): void {
 
@@ -160,13 +168,32 @@ class SideMenu extends Component {
 
     onLogout=()=>{
 
-        Async.clearData();
+
+
+        return Alert.alert(
+            "Are your sure?",
+            "Are you sure to log out?",
+            [
+
+                {
+                    text: "Yes",
+                    onPress: () => {
+                        Async.clearData();
+                    },
+                },
+
+                {
+                    text: "No",
+                },
+            ]
+        );
 
     }
 
     render() {
         const state=this.state;
         return (
+
             <View style={{flex:2}}>
 
 
@@ -221,6 +248,9 @@ class SideMenu extends Component {
                 </View>
 
             </View>
+
+
+
         );
 
     }

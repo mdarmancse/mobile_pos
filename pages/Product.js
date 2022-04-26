@@ -6,11 +6,7 @@ import {Image, SafeAreaView, TextInput, Picker, StatusBar, Alert, ScrollView} fr
 import {Navigation} from 'react-native-navigation';
 import RestClient from "../RestApi/RestClient";
 import AppUrl from "../RestApi/AppUrl";
-
-import Loader from '../components/Loader';
-import Error from '../components/Error';
-
-
+import Nav from "../helper/Navigator";
 
 import Style from '../assets/style'
 import {RNToasty} from "react-native-toasty";
@@ -76,46 +72,7 @@ class About extends Component {
 
     }
 
-    goMangeProduct=()=>{
-        Navigation.push('CenterScreen',{
 
-            component:{
-                name:'ProductList',
-                color: 'white',
-
-                options:{
-
-                    sideMenu:{
-                        left:{
-                            visible:false,
-
-
-                        }
-
-                    },
-                    topBar:{
-                        title:{
-                            text:'Products',
-                            color: 'white',
-
-                        },
-
-                        background: {
-                            color:'#00cccc'
-                        },
-                        backButton: { color: '#ffffff' }
-
-
-                    }
-                }
-            }
-
-
-        })
-
-
-
-    }
 
     AddProduct=()=>{
         let formData=new FormData();
@@ -182,7 +139,7 @@ class About extends Component {
 
                     </View>
                     <View style={{flex:1,marginTop:5,marginBottom:5}}>
-                        <Button onPress={this.goMangeProduct}
+                        <Button onPress={Nav.goMangeProduct}
                             iconLeft  style={{width:'100%'}} success>
                             <Icon name='cog' />
                             <Text style={[Style.addManageBtn]}>Manage Product</Text>

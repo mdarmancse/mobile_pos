@@ -3,10 +3,92 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {RNToasty} from "react-native-toasty";
 import {Navigation} from "react-native-navigation";
+import RestClient from "../RestApi/RestClient";
+import AppUrl from "../RestApi/AppUrl";
 
 class Navigator {
 
 
+    static goAddProduct=()=>{
+        Navigation.push('CenterScreen',{
+
+            component:{
+                name:'ProductPage',
+                color: 'white',
+
+                options:{
+
+                    sideMenu:{
+                        left:{
+                            visible:false,
+
+
+                        }
+
+                    },
+                    topBar:{
+                        title:{
+                            text:'Products',
+                            color: 'white',
+
+                        },
+
+                        background: {
+                            color:'#00cccc'
+                        },
+                        backButton: { color: '#ffffff' }
+
+
+                    }
+                }
+            }
+
+
+        })
+
+
+
+    }
+     static goMangeProduct=()=>{
+        Navigation.push('CenterScreen',{
+
+            component:{
+                name:'ProductList',
+                color: 'white',
+
+                options:{
+
+                    sideMenu:{
+                        left:{
+                            visible:false,
+
+
+                        }
+
+                    },
+                    topBar:{
+                        title:{
+                            text:'Products',
+                            color: 'white',
+
+                        },
+
+                        background: {
+                            color:'#00cccc'
+                        },
+                        backButton: { color: '#ffffff' }
+
+
+                    }
+                }
+            }
+
+
+        })
+
+
+
+    }
 
 
 
@@ -21,7 +103,15 @@ class Navigator {
                             visible: false,
                             drawBehind: true,
                             animate: false,
-                        }
+                        },
+                        sideMenu: {
+
+                            left: {
+                                visible: false,
+                                enabled: false
+                            }
+
+                        },
                     }
                 },
 
@@ -61,6 +151,7 @@ class Navigator {
                         background: {
                             color:'#00cccc'
                         },
+                        backButton: { color: '#ffffff' },
 
 
                     }
@@ -91,7 +182,7 @@ class Navigator {
                     },
                     topBar:{
                         title:{
-                            text:'Home',
+                            text:'Dashboard',
                             color: 'white',
 
                         },
@@ -110,6 +201,65 @@ class Navigator {
 
 
 
+    }
+
+    static goEditProduct=(product_id)=>{
+
+        Navigation.push('CenterScreen',{
+
+            component:{
+                name:'EditProduct',
+                color: 'white',
+                passProps: {
+                    product_id: product_id,
+
+                },
+                options:{
+
+                    sideMenu:{
+                        left:{
+                            visible:false,
+
+
+                        }
+
+                    },
+                    topBar:{
+                        title:{
+                            text:'Edit Product',
+                            color: 'white',
+
+                        },
+
+                        background: {
+                            color:'#00cccc'
+                        },
+                        backButton: { color: '#ffffff' }
+
+
+                    }
+                }
+            }
+
+
+        })
+
+
+
+    }
+
+    static productDelete=(product_id)=> {
+
+        RestClient.GetRequest(AppUrl.delete_product+'/?product_id='+product_id).then(result=>{
+
+            this.componentDidMount();
+
+
+
+
+        }).catch(error=>{
+
+        })
     }
 
 
